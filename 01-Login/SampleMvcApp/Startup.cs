@@ -30,6 +30,10 @@ namespace SampleMvcApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Add authentication services
+            services.AddAuthentication(
+                options => options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme);
+
             // Add framework services.
             services.AddMvc();
 
@@ -57,6 +61,38 @@ namespace SampleMvcApp
             }
 
             app.UseStaticFiles();
+
+            // Add the cookie middleware
+            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            {
+                AutomaticAuthenticate = true,
+                AutomaticChallenge = true
+            });
+
+            // Add the OIDC middleware
+            app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions("Auth0")
+            {
+                // Set the authority to your Auth0 domain
+                Authority = $"https://{auth0Settings.Value.Domain}",
+
+                // Configure the Auth0 Client ID and Client Secret
+                ClientId = auth0Settings.Value.ClientId,
+                ClientSecret = auth0Settings.Value.ClientSecret,
+
+                // Do not automatically authenticate and challenge
+                AutomaticAuthenticate = false,
+                AutomaticChallenge = false,
+
+                // Set response type to code
+                ResponseType = "code",
+
+                // Set the callback path, so Auth0 will call back to http://localhost:60856/signin-auth0 
+                // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
+                CallbackPath = new PathString("/signin-auth0"),
+
+                // Configure the Claims Issuer to be Auth0
+                ClaimsIssuer = "Auth0"
+            });
 
             app.UseMvc(routes =>
             {
