@@ -90,7 +90,25 @@ namespace SampleMvcApp
                 CallbackPath = new PathString("/signin-auth0"),
 
                 // Configure the Claims Issuer to be Auth0
-                ClaimsIssuer = "Auth0"
+                ClaimsIssuer = "Auth0",
+
+                Events = new OpenIdConnectEvents
+                {
+                    OnTicketReceived = context =>
+                    {
+                        // Get the ClaimsIdentity
+                        var identity = context.Principal.Identity as ClaimsIdentity;
+                        if (identity != null)
+                        {
+                            // Add the Name ClaimType. This is required if we want User.Identity.Name to actually return something!
+                            if (!context.Principal.HasClaim(c => c.Type == ClaimTypes.Name) &&
+                                identity.HasClaim(c => c.Type == "name"))
+                                identity.AddClaim(new Claim(ClaimTypes.Name, identity.FindFirst("name").Value));
+                        }
+
+                        return Task.FromResult(0);
+                    }
+                }
             });
 
             app.UseMvc(routes =>

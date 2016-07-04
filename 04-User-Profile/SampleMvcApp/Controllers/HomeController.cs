@@ -14,6 +14,12 @@ namespace SampleMvcApp.Controllers
             return View();
         }
 
+        [Authorize]
+        public IActionResult UserProfile()
+        {
+            return View();
+        }
+
         public IActionResult Error()
         {
             return View();

@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "User Profile";
+
+    int rowNo = 1;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>@ViewData["Title"].</h2>
+
+        <p>Welcome <strong>@User.Identity.Name</strong>. Here are the claims associated with your account:</p>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th colspan="2">
+                        Claim
+                    </th>
+                    <th>
+                        Value
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var claim in User.Claims)
+                {
+                    <tr>
+                        <th>@rowNo</th>
+                        <td>@claim.Type</td>
+                        <td>@claim.Value</td>
+                    </tr>
+
+                    rowNo++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
