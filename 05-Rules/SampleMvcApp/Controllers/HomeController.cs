@@ -23,7 +23,8 @@ namespace SampleMvcApp.Controllers
             {
                 Name = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value,
                 EmailAddress = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
-                ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
+                ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value,
+                Country = User.Claims.FirstOrDefault(c => c.Type == "country")?.Value
             });
         }
 
