@@ -28,8 +28,8 @@ namespace SampleMvcApp.Controllers
             });
         }
 
-        [Authorize(Policy = "ThailandOnly")]
-        public IActionResult Thailand()
+        [Authorize(Roles = "admin")]
+        public IActionResult Admin()
         {
             return View();
         }
