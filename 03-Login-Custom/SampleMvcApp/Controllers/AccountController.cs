@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using SampleMvcApp.ViewModels;
 using System.Threading.Tasks;
 using Auth0.AuthenticationApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SampleMvcApp.Controllers
 {
@@ -21,24 +22,14 @@ namespace SampleMvcApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string returnUrl = "/")
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
-        [HttpGet]
-        public IActionResult LoginExternal(string connection)
-        {
-            var properties = new AuthenticationProperties() { RedirectUri = "/" };
-
-            if (!string.IsNullOrEmpty(connection))
-                properties.Items.Add("connection", connection);
-
-            return new ChallengeResult("Auth0", properties);
-        }
-
         [HttpPost]
-        public async Task<IActionResult> Login(LoginViewModel vm)
+        public async Task<IActionResult> Login(LoginViewModel vm, string returnUrl = null)
         {
             if (ModelState.IsValid)
             {
@@ -69,7 +60,7 @@ namespace SampleMvcApp.Controllers
                     // Sign user into cookie middleware
                     await HttpContext.Authentication.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToLocal(returnUrl);
                 }
                 catch (Exception e)
                 {
@@ -80,6 +71,18 @@ namespace SampleMvcApp.Controllers
             return View(vm);
         }
 
+        [HttpGet]
+        public IActionResult LoginExternal(string connection, string returnUrl = "/")
+        {
+            var properties = new AuthenticationProperties() { RedirectUri = returnUrl };
+
+            if (!string.IsNullOrEmpty(connection))
+                properties.Items.Add("connection", connection);
+
+            return new ChallengeResult("Auth0", properties);
+        }
+
+        [Authorize]
         public IActionResult Logout()
         {
             HttpContext.Authentication.SignOutAsync("Auth0");
@@ -87,5 +90,32 @@ namespace SampleMvcApp.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        /// <summary>
+        /// This is just a helper action to enable you to easily see all claims related to a user. It helps when debugging your
+        /// application to see the in claims populated from the Auth0 ID Token
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        public IActionResult Claims()
+        {
+            return View();
+        }
+
+        #region Helpers
+
+        private IActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            else
+            {
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+            }
+        }
+
+        #endregion
     }
 }

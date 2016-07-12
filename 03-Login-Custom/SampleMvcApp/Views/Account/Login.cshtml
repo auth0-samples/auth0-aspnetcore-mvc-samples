@@ -27,7 +27,7 @@
                 <hr />
                 <center><h4>OR</h4></center>
                 <div class="form-group">
-                    <a class="btn btn-lg btn-default btn-block" asp-controller="Account" asp-action="LoginExternal" asp-route-connection="google-oauth2">
+                    <a class="btn btn-lg btn-default btn-block" asp-controller="Account" asp-action="LoginExternal" asp-route-connection="google-oauth2" asp-route-returnurl="@ViewData["ReturnUrl"]">
                         Login with Google
                     </a>
                 </div>

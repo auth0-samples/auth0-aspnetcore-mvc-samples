@@ -7,15 +7,9 @@ namespace SampleMvcApp.Controllers
 {
     public class AccountController : Controller
     {
-        public IActionResult Login()
+        public IActionResult Login(string returnUrl = "/")
         {
-            return new ChallengeResult("Auth0", new AuthenticationProperties() { RedirectUri = "/" });
-        }
-
-        [Authorize]
-        public IActionResult Claims()
-        {
-            return View();
+            return new ChallengeResult("Auth0", new AuthenticationProperties() { RedirectUri = returnUrl });
         }
 
         [Authorize]
@@ -25,6 +19,17 @@ namespace SampleMvcApp.Controllers
             HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             return RedirectToAction("Index", "Home");
+        }
+
+        /// <summary>
+        /// This is just a helper action to enable you to easily see all claims related to a user. It helps when debugging your
+        /// application to see the in claims populated from the Auth0 ID Token
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        public IActionResult Claims()
+        {
+            return View();
         }
     }
 }

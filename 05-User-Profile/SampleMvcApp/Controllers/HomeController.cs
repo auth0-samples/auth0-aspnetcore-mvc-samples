@@ -16,17 +16,6 @@ namespace SampleMvcApp.Controllers
             return View();
         }
 
-        [Authorize]
-        public IActionResult UserProfile()
-        {
-            return View(new UserProfileViewModel()
-            {
-                Name = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value,
-                EmailAddress = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
-                ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
-            });
-        }
-
         public IActionResult Error()
         {
             return View();

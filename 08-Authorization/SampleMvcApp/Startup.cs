@@ -97,6 +97,9 @@ namespace SampleMvcApp
                 // Configure the Claims Issuer to be Auth0
                 ClaimsIssuer = "Auth0",
 
+                // Saves tokens to the AuthenticationProperties
+                SaveTokens = true,
+
                 Events = new OpenIdConnectEvents
                 {
                     OnTicketReceived = context =>
@@ -109,6 +112,22 @@ namespace SampleMvcApp
                             if (!context.Principal.HasClaim(c => c.Type == ClaimTypes.Name) &&
                                 identity.HasClaim(c => c.Type == "name"))
                                 identity.AddClaim(new Claim(ClaimTypes.Name, identity.FindFirst("name").Value));
+
+                            // Check if token names are stored in Properties
+                            if (context.Properties.Items.ContainsKey(".TokenNames"))
+                            {
+                                // Token names a semicolon separated
+                                string[] tokenNames = context.Properties.Items[".TokenNames"].Split(';');
+
+                                // Add each token value as Claim
+                                foreach (var tokenName in tokenNames)
+                                {
+                                    // Tokens are stored in a Dictionary with the Key ".Token.<token name>"
+                                    string tokenValue = context.Properties.Items[$".Token.{tokenName}"];
+
+                                    identity.AddClaim(new Claim(tokenName, tokenValue));
+                                }
+                            }
                         }
 
                         return Task.FromResult(0);

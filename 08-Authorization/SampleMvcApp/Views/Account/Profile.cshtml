@@ -1,8 +1,6 @@
 ﻿@model SampleMvcApp.ViewModels.UserProfileViewModel
 @{
     ViewData["Title"] = "User Profile";
-
-    int rowNo = 1;
 }
 
 <div class="row">
@@ -24,34 +22,5 @@
                 </p>
             </div>
         </div>
-    </div>
-    <div class="col-md-12">
-
-        <h3>Claims</h3>
-
-        <table class="table">
-            <thead>
-            <tr>
-                <th colspan="2">
-                    Claim
-                </th>
-                <th>
-                    Value
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var claim in User.Claims)
-            {
-                <tr>
-                    <th>@rowNo</th>
-                    <td>@claim.Type</td>
-                    <td>@claim.Value</td>
-                </tr>
-
-                rowNo++;
-            }
-            </tbody>
-        </table>
     </div>
 </div>
