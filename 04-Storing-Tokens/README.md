@@ -16,7 +16,7 @@ Be sure to update the `appsettings.json` with your Auth0 settings:
     "Domain": "Your Auth0 domain",
     "ClientId": "Your Auth0 Client Id",
     "ClientSecret": "Your Auth0 Client Secret",
-    "CallbackUrl": "http://localhost:60856/signin-auth0"
+    "CallbackUrl": "http://localhost:5000/signin-auth0"
   } 
 }
 ```
@@ -58,7 +58,7 @@ app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions("Auth0")
     // Set response type to code
     ResponseType = "code",
 
-    // Set the callback path, so Auth0 will call back to http://localhost:60856/signin-auth0 
+    // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
     // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
     CallbackPath = new PathString("/signin-auth0"),
 
