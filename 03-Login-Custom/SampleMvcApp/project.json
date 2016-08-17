@@ -22,7 +22,8 @@
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0",
     "Microsoft.AspNetCore.Authentication.Cookies": "1.0.0",
     "Microsoft.AspNetCore.Authentication.OpenIdConnect": "1.0.0",
-    "Auth0.AuthenticationApi": "3.2.0"
+    "Auth0.AuthenticationApi": "3.3.0",
+    "BundlerMinifier.Core": "2.2.281"
   },
 
   "tools": {
