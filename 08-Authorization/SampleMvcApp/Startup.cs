@@ -69,7 +69,7 @@ namespace SampleMvcApp
             });
 
             // Add the OIDC middleware
-            app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions("Auth0")
+            var options = new OpenIdConnectOptions("Auth0")
             {
                 // Set the authority to your Auth0 domain
                 Authority = $"https://{auth0Settings.Value.Domain}",
@@ -128,7 +128,15 @@ namespace SampleMvcApp
                         return Task.FromResult(0);
                     }
                 }
-            });
+            };
+            options.Scope.Clear();
+            options.Scope.Add("openid");
+            options.Scope.Add("name");
+            options.Scope.Add("email");
+            options.Scope.Add("picture");
+            options.Scope.Add("country");
+            options.Scope.Add("roles");
+            app.UseOpenIdConnectAuthentication(options);
 
             app.UseMvc(routes =>
             {
