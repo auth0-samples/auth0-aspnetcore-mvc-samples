@@ -124,3 +124,31 @@ public IActionResult Logout()
     return RedirectToAction("Index", "Home");
 }
 ```
+
+## Passing additional parameters to the /authorize endpoint
+
+When asking Auth0 to authenticate a user, you might want to provide additional parameters to the `/authorize` endpoint, such as the `connection`, `offline_access`, `audience` or others. In order to do so, you need to handle the `OnRedirectToIdentityProvider` event when configuring the `OpenIdConnectionOptions` and call the `ProtocolMessage.SetParameter` method on the supplied `RedirectContext`:
+
+```
+// Add the OIDC middleware
+app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions("Auth0")
+{
+    // Set the authority to your Auth0 domain
+    Authority = $"https://{auth0Settings.Value.Domain}",
+
+    [...], // other options
+    
+    Events = new OpenIdConnectEvents
+    {
+        OnRedirectToIdentityProvider = context =>
+        {
+            // add any custom parameters here
+            context.ProtocolMessage.SetParameter("connection", "google-oauth2");
+
+            return Task.CompletedTask;
+        }
+    }    
+});
+```
+
+If you need to make this dynamic (i.e. provide information that affects what parameters will be set), take a look at [this blog post](http://www.jerriepelser.com/blog/adding-parameters-to-openid-connect-authorization-url/).
