@@ -41,7 +41,7 @@ namespace SampleMvcApp.Controllers
                     {
                         ClientId = _auth0Settings.ClientId,
                         Scope = "openid",
-                        Connection = "Database-Connection", // Specify the correct name of your DB connection
+                        Connection = "Username-Password-Authentication", // Specify the correct name of your DB connection
                         Username = vm.EmailAddress,
                         Password = vm.Password
                     });
