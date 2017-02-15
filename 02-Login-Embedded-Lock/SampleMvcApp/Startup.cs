@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -9,6 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace SampleMvcApp
 {
@@ -59,6 +60,11 @@ namespace SampleMvcApp
 
                 // Configure the Claims Issuer to be Auth0
                 options.ClaimsIssuer = "Auth0";
+                options.Events = new OpenIdConnectEvents
+                {
+                    // handle the logout redirection 
+                    OnRedirectToIdentityProviderForSignOut = HandleRedirectToIdentityProviderForSignOut
+                };
             });
 
             // Add framework services.
@@ -69,6 +75,28 @@ namespace SampleMvcApp
 
             // Add the Auth0 Settings object so it can be injected
             services.Configure<Auth0Settings>(Configuration.GetSection("Auth0"));
+        }
+
+        public Task HandleRedirectToIdentityProviderForSignOut(RedirectContext context)
+        {
+            var logoutUri = $"https://{Configuration["auth0:domain"]}/v2/logout?client_id={Configuration["auth0:clientId"]}";
+
+            var postLogoutUri = context.Properties.RedirectUri;
+            if (!string.IsNullOrEmpty(postLogoutUri))
+            {
+                if (postLogoutUri.StartsWith("/"))
+                {
+                    // transform to absolute
+                    var request = context.Request;
+                    postLogoutUri = request.Scheme + "://" + request.Host + request.PathBase + postLogoutUri;
+                }
+                logoutUri += $"&returnTo={ Uri.EscapeDataString(postLogoutUri)}";
+            }
+
+            context.Response.Redirect(logoutUri);
+            context.HandleResponse();
+
+            return Task.CompletedTask;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

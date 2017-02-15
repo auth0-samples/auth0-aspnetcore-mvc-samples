@@ -93,8 +93,9 @@ app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions("Auth0")
                 }
             }
 
-            return Task.FromResult(0);
-        }
+            return Task.CompletedTask;
+        },
+        // ...
     }
 });
 
