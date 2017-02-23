@@ -116,14 +116,58 @@ To log the user out, call the `SignOutAsync` method for both the OIDC middleware
 // Controllers/AccountController.cs
 
 [Authorize]
-public IActionResult Logout()
+public async Task Logout()
 {
-    HttpContext.Authentication.SignOutAsync("Auth0");
-    HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-    return RedirectToAction("Index", "Home");
+    await HttpContext.Authentication.SignOutAsync("Auth0", new AuthenticationProperties
+    {
+        // Indicate here where Auth0 should redirect the user after a logout.
+        // Note that the resulting absolute Uri must be whitelisted in the 
+        // **Allowed Logout URLs** settings for the client.
+        RedirectUri = Url.Action("Index", "Home")
+    });
+    await HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 }
 ```
+
+When configuring the OIDC middleware, you will have to handle the `OnRedirectToIdentityProviderForSignOut` event to redirect
+the user to the [Auth0 logout endpoint](https://auth0.com/docs/logout#log-out-a-user):
+
+```
+// Add the OIDC middleware
+var options = new OpenIdConnectOptions("Auth0")
+{
+    // other options ommited for brevity
+    [...],
+    Events = new OpenIdConnectEvents
+    {
+        // handle the logout redirection 
+        OnRedirectToIdentityProviderForSignOut = (context) =>
+        {
+            var logoutUri = $"https://{auth0Settings.Value.Domain}/v2/logout?client_id={auth0Settings.Value.ClientId}";
+
+            var postLogoutUri = context.Properties.RedirectUri;
+            if (!string.IsNullOrEmpty(postLogoutUri))
+            {
+                if (postLogoutUri.StartsWith("/"))
+                {
+                    // transform to absolute
+                    var request = context.Request;
+                    postLogoutUri = request.Scheme + "://" + request.Host + request.PathBase + postLogoutUri;
+                }
+                logoutUri += $"&returnTo={ Uri.EscapeDataString(postLogoutUri)}";
+            }
+
+            context.Response.Redirect(logoutUri);
+            context.HandleResponse();
+
+            return Task.CompletedTask;
+        }
+    }
+};
+[...]
+app.UseOpenIdConnectAuthentication(options);
+```
+
 
 ## Passing additional parameters to the /authorize endpoint
 
