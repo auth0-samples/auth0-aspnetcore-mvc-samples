@@ -1,10 +1,11 @@
-﻿using System.Linq;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http.Authentication;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using SampleMvcApp.ViewModels;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace SampleMvcApp.Controllers
 {
@@ -16,12 +17,16 @@ namespace SampleMvcApp.Controllers
         }
 
         [Authorize]
-        public IActionResult Logout()
+        public async Task Logout()
         {
-            HttpContext.Authentication.SignOutAsync("Auth0");
-            HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-            return RedirectToAction("Index", "Home");
+            await HttpContext.Authentication.SignOutAsync("Auth0", new AuthenticationProperties
+            {
+                // Indicate here where Auth0 should redirect the user after a logout.
+                // Note that the resulting absolute Uri must be whitelisted in the 
+                // **Allowed Logout URLs** settings for the client.
+                RedirectUri = Url.Action("Index", "Home")
+            });
+            await HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
         [Authorize]

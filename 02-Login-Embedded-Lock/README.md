@@ -74,6 +74,11 @@ public void ConfigureServices(IServiceCollection services)
 
         // Configure the Claims Issuer to be Auth0
         options.ClaimsIssuer = "Auth0";
+        options.Events = new OpenIdConnectEvents
+        {
+            // handle the logout redirection 
+            OnRedirectToIdentityProviderForSignOut = HandleRedirectToIdentityProviderForSignOut
+        };
     });
 
     // Code omitted for brevity...
@@ -132,7 +137,7 @@ public IActionResult Login(string returnUrl = "/")
 <div id="root" style="width: 320px; margin: 40px auto; padding: 10px; border-style: dashed; border-width: 1px;">
     embeded area
 </div>
-<script src="https://cdn.auth0.com/js/lock/10.4/lock.min.js"></script>
+<script src="https://cdn.auth0.com/js/lock/10.11/lock.min.js"></script>
 <script>
 
   var lock = new Auth0Lock('@Model.ClientId', '@Model.Domain', {
@@ -160,11 +165,15 @@ To log the user out, call the `SignOutAsync` method for both the OIDC middleware
 // Controllers/AccountController.cs
 
 [Authorize]
-public IActionResult Logout()
+public async Task Logout()
 {
-    HttpContext.Authentication.SignOutAsync("Auth0");
-    HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-    return RedirectToAction("Index", "Home");
+    await HttpContext.Authentication.SignOutAsync("Auth0", new AuthenticationProperties
+    {
+        // Indicate here where Auth0 should redirect the user after a logout.
+        // Note that the resulting absolute Uri must be whitelisted in the 
+        // **Allowed Logout URLs** settings for the client.
+        RedirectUri = Url.Action("Index", "Home")
+    });
+    await HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 }
 ```
