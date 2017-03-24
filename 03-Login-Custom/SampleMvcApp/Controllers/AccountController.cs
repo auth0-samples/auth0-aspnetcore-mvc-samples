@@ -106,6 +106,11 @@ namespace SampleMvcApp.Controllers
             return View();
         }
 
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
         #region Helpers
 
         private IActionResult RedirectToLocal(string returnUrl)
