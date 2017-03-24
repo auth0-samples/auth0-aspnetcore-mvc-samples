@@ -51,5 +51,10 @@ namespace SampleMvcApp.Controllers
         {
             return View();
         }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }
