@@ -31,7 +31,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink.Loader" Version="14.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="1.1.1" />
-    <PackageReference Include="Auth0.AuthenticationApi" Version="3.7.0" />
+    <PackageReference Include="Auth0.AuthenticationApi" Version="4.0.0" />
     <PackageReference Include="BundlerMinifier.Core" Version="2.4.337" />
   </ItemGroup>
 

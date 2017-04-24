@@ -9,6 +9,7 @@ using SampleMvcApp.ViewModels;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Localization.Internal;
 
 namespace SampleMvcApp.Controllers
 {
@@ -25,6 +26,7 @@ namespace SampleMvcApp.Controllers
         public IActionResult Login(string returnUrl = "/")
         {
             ViewData["ReturnUrl"] = returnUrl;
+
             return View();
         }
 
@@ -37,17 +39,18 @@ namespace SampleMvcApp.Controllers
                 {
                     AuthenticationApiClient client = new AuthenticationApiClient(new Uri($"https://{_auth0Settings.Domain}/"));
 
-                    var result = await client.AuthenticateAsync(new AuthenticationRequest
+                    var result = await client.GetTokenAsync(new ResourceOwnerTokenRequest
                     {
                         ClientId = _auth0Settings.ClientId,
-                        Scope = "openid",
-                        Connection = "Username-Password-Authentication", // Specify the correct name of your DB connection
+                        ClientSecret = _auth0Settings.ClientSecret,
+                        Scope = "openid profile",
+                        Realm = "Username-Password-Authentication", // Specify the correct name of your DB connection
                         Username = vm.EmailAddress,
                         Password = vm.Password
                     });
 
                     // Get user info from token
-                    var user = await client.GetTokenInfoAsync(result.IdToken);
+                    var user = await client.GetUserInfoAsync(result.AccessToken);
 
                     // Create claims principal
                     var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
