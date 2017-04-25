@@ -1,12 +1,10 @@
 # ASP.NET Core OAuth2 Sample
 
-This sample demonstrates how you can configure the standard OAuth2 middleware to authenticate users of an ASP.NET Core MVC application using Auth0.
-
-> This sample assumes that you are not using other authentication middleware such as ASP.NET Identity
+This sample demonstrates how you can configure the standard OAuth2 middleware to authenticate users of an ASP.NET Core MVC application using Auth0. 
 
 ## 1. Configure your Auth0 application
 
-Go to the Auth0 Dashboard and esure that you add the URL http://localhost:5000/signin-auth0 to your list of callback URLs
+Go to the Auth0 Dashboard and ensure that you add the URL http://localhost:5000/signin-auth0 to your list of callback URLs
 
 ## 2. Add the cookie and OAuth NuGet packages
 
@@ -19,30 +17,33 @@ Install-Package Microsoft.AspNetCore.Authentication.OAuth
 
 In the ConfigureServices of your Startup class, ensure that you add the authentication services:
 
-```
+```csharp
 public void ConfigureServices(IServiceCollection services)
 {
     // Add authentication services
-    services.AddAuthentication(
-        options => options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme);
+    services.AddAuthentication(options => options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme);
 
     // Add framework services.
     services.AddMvc();
-}  
+
+    // Add functionality to inject IOptions<T>
+    services.AddOptions();
+
+    // Add the Auth0 Settings object so it can be injected
+    services.Configure<Auth0Settings>(Configuration.GetSection("Auth0"));
+}
 ```
 
 ## 4. Configure the cookie and OAuth middleware
 
 In the Configure method of your Startup class, register the Cookie and OAuth middleware:
 
-```
+```csharp
 // Add the cookie middleware
 app.UseCookieAuthentication(new CookieAuthenticationOptions
 {
     AutomaticAuthenticate = true,
-    AutomaticChallenge = true,
-    LoginPath = new PathString("/login"),
-    LogoutPath = new PathString("/logout")
+    AutomaticChallenge = true
 });
 
 // Add the OAuth2 middleware
@@ -52,23 +53,29 @@ app.UseOAuthAuthentication(new OAuthOptions
     AuthenticationScheme = "Auth0",
 
     // Configure the Auth0 Client ID and Client Secret
-    ClientId = Configuration["auth0:clientId"],
-    ClientSecret = Configuration["auth0:clientSecret"],
+    ClientId = auth0Settings.Value.ClientId,
+    ClientSecret = auth0Settings.Value.ClientSecret,
 
     // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
     // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
     CallbackPath = new PathString("/signin-auth0"),
 
     // Configure the Auth0 endpoints                
-    AuthorizationEndpoint = $"https://{Configuration["auth0:domain"]}/authorize",
-    TokenEndpoint = $"https://{Configuration["auth0:domain"]}/oauth/token",
-    UserInformationEndpoint = $"https://{Configuration["auth0:domain"]}/userinfo",
+    AuthorizationEndpoint = $"https://{auth0Settings.Value.Domain}/authorize",
+    TokenEndpoint = $"https://{auth0Settings.Value.Domain}/oauth/token",
+    UserInformationEndpoint = $"https://{auth0Settings.Value.Domain}/userinfo",
+
+    // To save the tokens to the Authentication Properties we need to set this to true
+    // See code in OnTicketReceived event below to extract the tokens and save them as Claims
+    SaveTokens = true,
 
     // Set scope to openid. See https://auth0.com/docs/scopes
     Scope = { "openid" },
     
     Events = new OAuthEvents
     {
+        // When creating a ticket we need to manually make the call to the User Info endpoint to retrieve the user's information,
+        // and subsequently extract the user's ID and email adddress and store them as claims
         OnCreatingTicket = async context =>
         {
             // Retrieve user info
@@ -102,31 +109,63 @@ app.UseOAuthAuthentication(new OAuthOptions
 
 ## 5. Handle the login and logout routes
 
-In step 4 we configured the cookie middleware to redirect users to the /login and /logout paths respectively to log users in or out. We need to write handlers for these routes in the Configure method:
+The cookie middleware will redirect users to the `account/login` and `account/logout` paths respectively to log users in or out. We need to add an `AccountController` class with actions to handle these routes:
+
+```csharp
+public class AccountController: Controller
+{
+    private readonly IOptions<Auth0Settings> _auth0Settings;
+
+    public AccountController(IOptions<Auth0Settings> auth0Settings)
+    {
+        _auth0Settings = auth0Settings;
+    }
+
+    public IActionResult Login(string returnUrl = "/")
+    {
+        return new ChallengeResult("Auth0", new AuthenticationProperties() { RedirectUri = returnUrl });
+    }
+
+    [Authorize]
+    public async Task Logout()
+    {
+        // Sign the user out of the cookie authentication middleware (i.e. it will clear the local session cookie)
+        await HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+        // Construct the post-logout URL (i.e. where we'll tell Auth0 to redirect after logging the user out)
+        var request = HttpContext.Request;
+        string postLogoutUri = request.Scheme + "://" + request.Host + request.PathBase + Url.Action("Index", "Home");
+
+        // Redirect to the Auth0 logout endpoint in order to log out of Auth0
+        string logoutUri = $"https://{_auth0Settings.Value.Domain}/v2/logout?client_id={_auth0Settings.Value.ClientId}&returnTo={Uri.EscapeDataString(postLogoutUri)}";
+        HttpContext.Response.Redirect(logoutUri);
+    }
+}
+```
+
+# Running the application
+
+To run this sample you can fork and clone this repo.
+
+Be sure to update the appsettings.json with your Auth0 settings:
+
+    {
+        "Auth0": {
+            "domain": "Your Auth0 domain",
+            "clientId": "Your Auth0 Client Id",
+            "clientSecret": "Your Auth0 Client Secret"
+        } 
+    }
+
+Then, restore the NuGet and Bower packages and run the application:
 
 ```
-// Listen for requests on the /login path, and issue a challenge to log in with the OAuth middleware
-app.Map("/login", builder =>
-{
-    builder.Run(async context =>
-    {
-        // Return a challenge to invoke the Auth0 authentication scheme
-        await context.Authentication.ChallengeAsync("Auth0", new AuthenticationProperties() { RedirectUri = "/" });
-    });
-});
+# Install the dependencies
+bower install
+dotnet restore
 
-// Listen for requests on the /logout path, and sign the user out
-app.Map("/logout", builder =>
-{
-    builder.Run(async context =>
-    {
-        // Sign the user out of the authentication middleware (i.e. it will clear the Auth cookie)
-        await context.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-        // Redirect the user to the home page after signing out
-        context.Response.Redirect("/");
-    });
-});
+# Run
+dotnet run
 ```
 
-You can also alternatively set the AutomaticAuthenticate and AutomaticChallenge of the OAuth middleware to true. If you do this then the OAuth middleware will automatically be invoked when a user tries to access a protected resource.
+You can shut down the web server manually by pressing Ctrl-C.
