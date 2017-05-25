@@ -2,7 +2,7 @@
 
 This example shows how to use Rules in your application.
 
-You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/07-rules). 
+You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/05-rules). 
 
 ## Getting Started
 

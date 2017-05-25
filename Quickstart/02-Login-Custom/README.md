@@ -2,7 +2,7 @@
 
 This example shows how to add ***Login*** to your application using a custom Login screen and using the [Auth0.NET SDK](https://github.com/auth0/auth0.net) to log the user in.
 
-You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/03-login-custom). 
+You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/02-login-custom). 
 
 ## Getting Started
 
