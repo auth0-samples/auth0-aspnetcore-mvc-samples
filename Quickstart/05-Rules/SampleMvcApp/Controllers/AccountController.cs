@@ -34,10 +34,10 @@ namespace SampleMvcApp.Controllers
         {
             return View(new UserProfileViewModel()
             {
-                Name = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value,
+                Name = User.Identity.Name,
                 EmailAddress = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
                 ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value,
-                Country = User.Claims.FirstOrDefault(c => c.Type == "country")?.Value
+                Country = User.Claims.FirstOrDefault(c => c.Type == "https://schemas.quickstarts.com/country")?.Value
             });
         }
 

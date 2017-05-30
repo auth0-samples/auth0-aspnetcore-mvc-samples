@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Tokens;
 
 namespace SampleMvcApp
 {
@@ -93,41 +94,14 @@ namespace SampleMvcApp
                 // Configure the Claims Issuer to be Auth0
                 ClaimsIssuer = "Auth0",
 
-                // Saves tokens to the AuthenticationProperties
-                SaveTokens = true,
+                // Set the correct name claim type
+                TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = "name"
+                },
 
                 Events = new OpenIdConnectEvents
                 {
-                    OnTicketReceived = context =>
-                    {
-                        // Get the ClaimsIdentity
-                        var identity = context.Principal.Identity as ClaimsIdentity;
-                        if (identity != null)
-                        {
-                            // Add the Name ClaimType. This is required if we want User.Identity.Name to actually return something!
-                            if (!context.Principal.HasClaim(c => c.Type == ClaimTypes.Name) &&
-                                identity.HasClaim(c => c.Type == "name"))
-                                identity.AddClaim(new Claim(ClaimTypes.Name, identity.FindFirst("name").Value));
-
-                            // Check if token names are stored in Properties
-                            if (context.Properties.Items.ContainsKey(".TokenNames"))
-                            {
-                                // Token names a semicolon separated
-                                string[] tokenNames = context.Properties.Items[".TokenNames"].Split(';');
-
-                                // Add each token value as Claim
-                                foreach (var tokenName in tokenNames)
-                                {
-                                    // Tokens are stored in a Dictionary with the Key ".Token.<token name>"
-                                    string tokenValue = context.Properties.Items[$".Token.{tokenName}"];
-
-                                    identity.AddClaim(new Claim(tokenName, tokenValue));
-                                }
-                            }
-                        }
-
-                        return Task.CompletedTask;
-                    },
                     // handle the logout redirection 
                     OnRedirectToIdentityProviderForSignOut = (context) =>
                     {
@@ -154,10 +128,8 @@ namespace SampleMvcApp
             };
             options.Scope.Clear();
             options.Scope.Add("openid");
-            options.Scope.Add("name");
+            options.Scope.Add("profile");
             options.Scope.Add("email");
-            options.Scope.Add("picture");
-            options.Scope.Add("country");
             options.Scope.Add("roles");
             app.UseOpenIdConnectAuthentication(options);
 
