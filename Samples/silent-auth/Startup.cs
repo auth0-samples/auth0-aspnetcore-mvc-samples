@@ -127,10 +127,11 @@ namespace SampleMvcApp
                     },
                     OnMessageReceived = async (context) =>
                     {
-                        const string LoginRequired = "login_required";
+                        string[] LoginRequiredErrors = 
+                            { "login_required", "consent_required", "interaction_required" };
                         string error;
                         context.ProtocolMessage.Parameters.TryGetValue("error", out error);
-                        if (error == LoginRequired)
+                        if (LoginRequiredErrors.Contains(error))
                         {
                             var authenticationProperties = new Microsoft.AspNetCore.Http.Authentication.AuthenticationProperties()
                             {

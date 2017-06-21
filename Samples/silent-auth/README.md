@@ -74,9 +74,9 @@ var options = new OpenIdConnectOptions("Auth0")
 
 ### 2. Handle silent authentication error
 
-Silent authentication can fail if the user doesn't have a valid session at the identity provider. 
-In those cases, it will return an "error=login_required" to the callback. We will
-check for this in the `OnMessageReceived` event and, if found, trigger a new
+Silent authentication can fail for a number of reasons, for instance if the user doesn't have a valid session at the identity provider, or needs to give consent, or needs to be redirected to another please. 
+For each of those cases, Auth0 will return a specific error to the callback URL. We will
+check for those in the `OnMessageReceived` event and, if found, trigger a new
 authentication request, this time signaling that a login is required (so that the
 code above doesn't add the `prompt=none` parameter).
 
@@ -95,9 +95,11 @@ var options = new OpenIdConnectOptions("Auth0")
         },
         OnMessageReceived = async (context) =>
         {
+            string[] LoginRequiredErrors = 
+                { "login_required", "consent_required", "interaction_required" };
             string error;
             context.ProtocolMessage.Parameters.TryGetValue("error", out error);
-            if (error == "login_required")
+            if (LoginRequiredErrors.Contains(error))
             {
                 var authenticationProperties = new Microsoft.AspNetCore.Http.Authentication.AuthenticationProperties()
                 {
