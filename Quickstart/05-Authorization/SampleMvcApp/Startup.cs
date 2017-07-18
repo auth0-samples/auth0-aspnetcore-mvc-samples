@@ -97,7 +97,8 @@ namespace SampleMvcApp
                 // Set the correct name claim type
                 TokenValidationParameters = new TokenValidationParameters
                 {
-                    NameClaimType = "name"
+                    NameClaimType = "name",
+                    RoleClaimType = "https://schemas.quickstarts.com/roles"
                 },
 
                 Events = new OpenIdConnectEvents
@@ -129,8 +130,6 @@ namespace SampleMvcApp
             options.Scope.Clear();
             options.Scope.Add("openid");
             options.Scope.Add("profile");
-            options.Scope.Add("email");
-            options.Scope.Add("roles");
             app.UseOpenIdConnectAuthentication(options);
 
             app.UseMvc(routes =>
