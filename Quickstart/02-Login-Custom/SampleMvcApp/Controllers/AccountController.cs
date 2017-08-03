@@ -84,13 +84,13 @@ namespace SampleMvcApp.Controllers
             if (!string.IsNullOrEmpty(connection))
                 properties.Items.Add("connection", connection);
 
-            await HttpContext.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme, properties);
+            await HttpContext.ChallengeAsync("Auth0", properties);
         }
 
         [Authorize]
         public async Task Logout()
         {
-            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties
+            await HttpContext.SignOutAsync("Auth0", new AuthenticationProperties
             {
                 // Indicate here where Auth0 should redirect the user after a logout.
                 // Note that the resulting absolute Uri must be whitelisted in the 

@@ -11,14 +11,13 @@ namespace SampleMvcApp.Controllers
     {
         public async Task Login(string returnUrl = "/")
         {
-            await HttpContext.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme, 
-                new AuthenticationProperties() { RedirectUri = returnUrl });
+            await HttpContext.ChallengeAsync("Auth0", new AuthenticationProperties() { RedirectUri = returnUrl });
         }
 
         [Authorize]
         public async Task Logout()
         {
-            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties
+            await HttpContext.SignOutAsync("Auth0", new AuthenticationProperties
             {
                 // Indicate here where Auth0 should redirect the user after a logout.
                 // Note that the resulting absolute Uri must be whitelisted in the 
