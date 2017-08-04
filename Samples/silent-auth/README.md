@@ -46,7 +46,7 @@ authentication by default, or do it only if specifically requested.
 
 In this sample, we are attempting silent authentication by default, so we handle the
 `OnRedirectToIdentityProvider` event in the `OpenIDConnectOptions` to add the parameter.
-Notice that we are checking for a case where this shouldn't be done, this is explained later.
+Notice that we omit adding the `prompt=none` if the `loginrequired` custom property is present, this is explained later.
 
 ```csharp
 // Startup.cs
@@ -77,8 +77,7 @@ var options = new OpenIdConnectOptions("Auth0")
 Silent authentication can fail for a number of reasons, for instance if the user doesn't have a valid session at the identity provider, or needs to give consent, or needs to be redirected to another please. 
 For each of those cases, Auth0 will return a specific error to the callback URL. We will
 check for those in the `OnMessageReceived` event and, if found, trigger a new
-authentication request, this time signaling that a login is required (so that the
-code above doesn't add the `prompt=none` parameter).
+authentication request, this time signaling that a login is required by adding the `loginrequired` custom property (so that the code above doesn't add the `prompt=none` parameter).
 
 ```csharp
 var options = new OpenIdConnectOptions("Auth0")
@@ -113,4 +112,3 @@ var options = new OpenIdConnectOptions("Auth0")
     }
 }
 ```
-
