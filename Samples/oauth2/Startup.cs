@@ -30,8 +30,8 @@ namespace AspNetCoreOAuth2Sample
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
-            .AddCookieAuthentication()
-            .AddOAuthAuthentication("Auth0", options => {
+            .AddCookie()
+            .AddOAuth("Auth0", options => {
                 // Configure the Auth0 Client ID and Client Secret
                 options.ClientId = Configuration["Auth0:ClientId"];
                 options.ClientSecret = Configuration["Auth0:ClientSecret"];

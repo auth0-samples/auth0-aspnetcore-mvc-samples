@@ -42,8 +42,8 @@ namespace AspNetCoreOidcSample
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
             })
-            .AddCookieAuthentication()
-            .AddOpenIdConnectAuthentication("Auth0", options => {
+            .AddCookie()
+            .AddOpenIdConnect("Auth0", options => {
                 // Set the authority to your Auth0 domain
                 options.Authority = $"https://{Configuration["Auth0:Domain"]}";
 
