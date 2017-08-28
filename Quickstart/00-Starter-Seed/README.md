@@ -10,7 +10,7 @@ This starter seed is a basic web application which was created using the Yeoman 
 
 ## To run this project
 
-1. Ensure that you have replaced the [appsettings.json][SampleMvcApp/appsettings.json] file with the values for your Auth0 account.
+1. Ensure that you have replaced the [appsettings.json](SampleMvcApp/appsettings.json) file with the values for your Auth0 account.
 
 2. Run the application from the command line:
 
