@@ -7,34 +7,21 @@ If you have multiple applications that share the same identity provider (Auth0) 
 want to implement an "automatic Single Sign-On", where the login screen is not shown
 if there is already a session at the identity provider, you can use this mechanism.
 
-## Getting Started
+## Requirements
 
-To run this sample you can fork and clone this repo.
+* .[NET Core 2.0 SDK](https://www.microsoft.com/net/download/core)
 
-Be sure to update the `appsettings.json` with your Auth0 settings:
+## To run this project
 
-```json
-{
-  "Auth0": {
-    "Domain": "Your Auth0 domain",
-    "ClientId": "Your Auth0 Client Id",
-    "ClientSecret": "Your Auth0 Client Secret",
-    "CallbackUrl": "http://localhost:5000/signin-auth0"
-  } 
-}
-```
+1. Ensure that you have replaced the [appsettings.json](appsettings.json) file with the values for your Auth0 account.
 
-Then restore the NuGet packages and run the application:
+2. Run the application from the command line:
 
-```bash
-# Install the dependencies
-dotnet restore
+    ```bash
+    dotnet run
+    ```
 
-# Run
-dotnet run
-```
-
-You can shut down the web server manually by pressing Ctrl-C.
+3. Go to `http://localhost:5000` in your web browser to view the website.
 
 ## Important Snippets
 
@@ -51,25 +38,30 @@ Notice that we omit adding the `prompt=none` if the `loginrequired` custom prope
 ```csharp
 // Startup.cs
 
-var options = new OpenIdConnectOptions("Auth0")
-{
-    [...] other options omitted for brevity
+services.AddAuthentication(options => {
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddOpenIdConnect("Auth0", options => {
+    // other options omitted for brevity
+    // [...] 
 
-    Events = new OpenIdConnectEvents
+    options.Events = new OpenIdConnectEvents
     {
         // other events, like logout, omitted for brevity
         // [...]
         OnRedirectToIdentityProvider = (context) =>
         {
-            // unless told otherwise, use silent authentication by default
             if (!context.Properties.Items.ContainsKey("loginrequired"))
             {
                 context.ProtocolMessage.Parameters.Add("prompt", "none");
             }
             return Task.CompletedTask;
-        },
-    }
-}
+        }
+    };   
+});
 ```
 
 ### 2. Handle silent authentication error
@@ -80,17 +72,26 @@ check for those in the `OnMessageReceived` event and, if found, trigger a new
 authentication request, this time signaling that a login is required by adding the `loginrequired` custom property (so that the code above doesn't add the `prompt=none` parameter).
 
 ```csharp
-var options = new OpenIdConnectOptions("Auth0")
-{
-    [...] other options omitted for brevity
+// Startup.cs
 
-    Events = new OpenIdConnectEvents
+services.AddAuthentication(options => {
+    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddOpenIdConnect("Auth0", options => {
+    // other options omitted for brevity
+    // [...] 
+
+    options.Events = new OpenIdConnectEvents
     {
         // other events, like logout, omitted for brevity
         // [...]
         OnRedirectToIdentityProvider = (context) =>
         {
-            [...]
+            // omitted for brevity
+            // [...]
         },
         OnMessageReceived = async (context) =>
         {
@@ -109,6 +110,6 @@ var options = new OpenIdConnectOptions("Auth0")
                 context.HandleResponse();
             }
         }
-    }
-}
+    };   
+});
 ```

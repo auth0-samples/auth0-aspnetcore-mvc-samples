@@ -4,145 +4,168 @@ This sample demonstrates how you can configure the standard OIDC middleware to a
 
 For more information on how to use Auth0 with ASP.NET Core, please look at the [ASP.NET Core Quickstart](https://auth0.com/docs/quickstart/webapp/aspnet-core)
 
-## 1. Configure your Auth0 application
+## Requirements
 
-Go to the [Auth0 Dashboard](https://manage.auth0.com) and ensure that you:
+* .[NET Core 2.0 SDK](https://www.microsoft.com/net/download/core)
 
-* Add the URL `http://localhost:5000/signin-auth0` to your list of callback URLs
-* Configure your application to sign JWT using HS256 (you find this under Settings > Show Advanced Settings > OAuth > JsonWebToken Signature Algorithm)
+## To run this project
 
-## 2. Add the cookie and OIDC NuGet packages
+1. Ensure that you hae configured your Auth0 Client to sign JWT using HS256 (you find this under Settings > Show Advanced Settings > OAuth > JsonWebToken Signature Algorithm)
 
-```
-Install-Package Microsoft.AspNetCore.Authentication.Cookies
-Install-Package Microsoft.AspNetCore.Authentication.OpenIdConnect
-```
+2. Ensure that you have replaced the [appsettings.json](appsettings.json) file with the values for your Auth0 account.
 
-## 3. Configure Authentication Services
+3. Run the application from the command line:
 
-In the `ConfigureServices` of your `Startup` class, ensure that you add the authentication services:
+    ```bash
+    dotnet run
+    ```
 
-```
+4. Go to `http://localhost:5000` in your web browser to view the website.
+
+## Important Snippets
+
+## 1. Configure Authentication Services
+
+In the `ConfigureServices` of your `Startup` class, prepare the signature validation key and ensure that you add the authentication services:
+
+```csharp
 public void ConfigureServices(IServiceCollection services)
 {
+    // Get the client secret used for signing the tokens
+    var keyAsBytes = Encoding.UTF8.GetBytes(Configuration["Auth0:ClientSecret"]);
+    
+    // if using non-base64 encoded key, just use:
+    //var keyAsBase64 = auth0Settings.Value.ClientSecret.Replace('_', '/').Replace('-', '+');
+    //var keyAsBytes = Convert.FromBase64String(keyAsBase64);
+
+    var issuerSigningKey = new SymmetricSecurityKey(keyAsBytes);
+
     // Add authentication services
-    services.AddAuthentication(
-        options => options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme);
-            
+    services.AddAuthentication(options => {
+        options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    })
+    .AddCookie()
+    .AddOpenIdConnect("Auth0", options => {
+        // Set the authority to your Auth0 domain
+        options.Authority = $"https://{Configuration["Auth0:Domain"]}";
+
+        // Configure the Auth0 Client ID and Client Secret
+        options.ClientId = Configuration["Auth0:ClientId"];
+        options.ClientSecret = Configuration["Auth0:ClientSecret"];
+
+        // Set response type to code
+        options.ResponseType = "code";
+
+        // Configure the scope
+        options.Scope.Clear();
+        options.Scope.Add("openid");
+        options.Scope.Add("profile");
+        options.Scope.Add("email");
+
+        // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
+        // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
+        options.CallbackPath = new PathString("/signin-auth0");
+
+        // Configure the Claims Issuer to be Auth0
+        options.ClaimsIssuer = "Auth0";
+
+        // manually setup the signature validation key
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            IssuerSigningKey = issuerSigningKey
+        };
+
+        options.Events = new OpenIdConnectEvents
+        {
+            // handle the logout redirection 
+            OnRedirectToIdentityProviderForSignOut = (context) =>
+            {
+                var logoutUri = $"https://{Configuration["Auth0:Domain"]}/v2/logout?client_id={Configuration["Auth0:ClientId"]}";
+
+                var postLogoutUri = context.Properties.RedirectUri;
+                if (!string.IsNullOrEmpty(postLogoutUri))
+                {
+                    if (postLogoutUri.StartsWith("/"))
+                    {
+                        // transform to absolute
+                        var request = context.Request;
+                        postLogoutUri = request.Scheme + "://" + request.Host + request.PathBase + postLogoutUri;
+                    }
+                    logoutUri += $"&returnTo={ Uri.EscapeDataString(postLogoutUri)}";
+                }
+
+                context.Response.Redirect(logoutUri);
+                context.HandleResponse();
+
+                return Task.CompletedTask;
+            }
+        };   
+    });
+    
     // Add framework services.
     services.AddMvc();
-
-    // Add functionality to inject IOptions<T>
-    services.AddOptions();
-
-    // Add the Auth0 Settings object so it can be injected
-    services.Configure<Auth0Settings>(Configuration.GetSection("Auth0"));
 }
 ```
 
-## 4. Configure the cookie and OIDC middleware
+## 2. Configure the Authentication middleware
 
-In the `Configure` method of your `Startup` class, prepare the signature validation key, register the Cookie and OIDC middleware:
+In the `Configure` method of your `Startup` class call the `UseAuthentication` extension method:
 
-```
-// Add the cookie middleware
-app.UseCookieAuthentication(new CookieAuthenticationOptions
+```csharp
+public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IOptions<Auth0Settings> auth0Settings)
 {
-    AutomaticAuthenticate = true,
-    AutomaticChallenge = true
-});
+    loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+    loggerFactory.AddDebug();
 
-// Get the client secret used for signing the tokens
-var keyAsBytes = Encoding.UTF8.GetBytes(auth0Settings.Value.ClientSecret);
-var issuerSigningKey = new SymmetricSecurityKey(keyAsBytes);
-
-// Add the OIDC middleware
-app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions("Auth0")
-{
-    // Set the authority to your Auth0 domain
-    Authority = $"https://{auth0Settings.Value.Domain}",
-                
-    // Configure the Auth0 Client ID and Client Secret
-    ClientId = auth0Settings.Value.ClientId,
-    ClientSecret = auth0Settings.Value.ClientSecret,
-
-    // Do not automatically authenticate and challenge
-    AutomaticAuthenticate = false, 
-    AutomaticChallenge = false,
-
-    // Set response type to code
-    ResponseType = "code",
-                
-    // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
-    // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
-    CallbackPath = new PathString("/signin-auth0"),
-                
-    // Configure the Claims Issuer to be Auth0
-    ClaimsIssuer = "Auth0",
-                
-    // The UserInfo endpoint does not really return any extra claims which were not returned in the original auth response, so
-    // we can save ourselves from making an extra request
-    GetClaimsFromUserInfoEndpoint = false,
-
-    // manually setup the signature validation key
-    TokenValidationParameters = new TokenValidationParameters
+    if (env.IsDevelopment())
     {
-        IssuerSigningKey = issuerSigningKey
+        app.UseDeveloperExceptionPage();
+        app.UseBrowserLink();
     }
-});
+    else
+    {
+        app.UseExceptionHandler("/Home/Error");
+    }
+
+    app.UseStaticFiles();
+
+    app.UseAuthentication();
+
+    app.UseMvc(routes =>
+    {
+        routes.MapRoute(
+            name: "default",
+            template: "{controller=Home}/{action=Index}/{id?}");
+    });
+}
+
 ```
 
-## 5. Handle the login and logout routes
+## 3. Handle the login and logout routes
 
 The cookie middleware will redirect users to the `account/login` and `account/logout` paths respectively to log users in or out. We need to add an `AccountController` class with actions to handle these routes:
 
-```
+```csharp
 public class AccountController : Controller
 {
-    public IActionResult Login(string returnUrl = "/")
+    public async Task Login(string returnUrl = "/")
     {
-        return new ChallengeResult("Auth0", new AuthenticationProperties() {RedirectUri = returnUrl});
+        await HttpContext.ChallengeAsync("Auth0", new AuthenticationProperties() { RedirectUri = returnUrl });
     }
 
     [Authorize]
     public async Task Logout()
     {
-        await HttpContext.Authentication.SignOutAsync("Auth0", new AuthenticationProperties
+        await HttpContext.SignOutAsync("Auth0", new AuthenticationProperties
         {
             // Indicate here where Auth0 should redirect the user after a logout.
             // Note that the resulting absolute Uri must be whitelisted in the 
             // **Allowed Logout URLs** settings for the client.
             RedirectUri = Url.Action("Index", "Home")
         });
-        await HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     }
 }
 ```
-
-# Running the application
-
-To run this sample you can fork and clone this repo.
-
-Be sure to update the appsettings.json with your Auth0 settings:
-
-    {
-        "Auth0": {
-            "domain": "Your Auth0 domain",
-            "clientId": "Your Auth0 Client Id",
-            "clientSecret": "Your Auth0 Client Secret"
-        } 
-    }
-
-Then, restore the NuGet and Bower packages and run the application:
-
-```
-# Install the dependencies
-bower install
-dotnet restore
-
-# Run
-dotnet run
-```
-
-You can shut down the web server manually by pressing Ctrl-C.
-
