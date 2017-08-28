@@ -4,13 +4,19 @@ This seed project can be used if you want to follow along with the steps in the 
 
 This starter seed is a basic web application which was created using the Yeoman generator for ASP.NET, and also includes some of the dependencies required to use the Cookie and OpenID Connect (OIDC) middleware.
 
+## Requirements
+
+* .[NET Core 2.0 SDK](https://www.microsoft.com/net/download/core)
+
 ## To run this project
 
-```bash
-dotnet restore
+1. Ensure that you have replaced the [appsettings.json][SampleMvcApp/appsettings.json] file with the values for your Auth0 account.
 
-dotnet run
-```
+2. Run the application from the command line:
 
-Then go to `http://localhost:5000` in your web browser to view the website.
+    ```bash
+    dotnet run
+    ```
+
+3. Go to `http://localhost:5000` in your web browser to view the website.
 

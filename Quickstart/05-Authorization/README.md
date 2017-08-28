@@ -4,36 +4,21 @@ This example shows how to allow only users in certain roles to access a particul
 
 You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/05-authorization). 
 
-## Getting Started
+## Requirements
 
-Please refer to the quickstart linked above for details on how to create the Rule required to run this application.
+* .[NET Core 2.0 SDK](https://www.microsoft.com/net/download/core)
 
-To run this quickstart you can fork and clone this repo.
+## To run this project
 
-Be sure to update the `appsettings.json` with your Auth0 settings:
+1. Ensure that you have replaced the [appsettings.json][SampleMvcApp/appsettings.json] file with the values for your Auth0 account.
 
-```json
-{
-  "Auth0": {
-    "Domain": "Your Auth0 domain",
-    "ClientId": "Your Auth0 Client Id",
-    "ClientSecret": "Your Auth0 Client Secret",
-    "CallbackUrl": "http://localhost:5000/signin-auth0"
-  } 
-}
-```
+2. Run the application from the command line:
 
-Then restore the NuGet packages and run the application:
+    ```bash
+    dotnet run
+    ```
 
-```bash
-# Install the dependencies
-dotnet restore
-
-# Run
-dotnet run
-```
-
-You can shut down the web server manually by pressing Ctrl-C.
+3. Go to `http://localhost:5000` in your web browser to view the website.
 
 ## Important Snippets
 

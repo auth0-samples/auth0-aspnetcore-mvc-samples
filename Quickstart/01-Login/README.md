@@ -4,38 +4,25 @@ This example shows how to add ***Login/SignUp*** to your application using the h
 
 You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/01-login). 
 
-## Getting Started
+## Requirements
 
-To run this quickstart you can fork and clone this repo.
+* .[NET Core 2.0 SDK](https://www.microsoft.com/net/download/core)
 
-Be sure to update the `appsettings.json` with your Auth0 settings:
+## To run this project
 
-```json
-{
-  "Auth0": {
-    "Domain": "Your Auth0 domain",
-    "ClientId": "Your Auth0 Client Id",
-    "ClientSecret": "Your Auth0 Client Secret",
-    "CallbackUrl": "http://localhost:5000/signin-auth0"
-  } 
-}
-```
+1. Ensure that you have replaced the [appsettings.json][SampleMvcApp/appsettings.json] file with the values for your Auth0 account.
 
-Then restore the NuGet packages and run the application:
+2. Run the application from the command line:
 
-```bash
-# Install the dependencies
-dotnet restore
+    ```bash
+    dotnet run
+    ```
 
-# Run
-dotnet run
-```
-
-You can shut down the web server manually by pressing Ctrl-C.
+3. Go to `http://localhost:5000` in your web browser to view the website.
 
 ## Important Snippets
 
-### 1. Add the Cookie and OIDC Middleware
+### 1. Register the Cookie and OIDC Authentication handlers
 
 ```csharp
 // Startup.cs
@@ -43,48 +30,58 @@ You can shut down the web server manually by pressing Ctrl-C.
 public void ConfigureServices(IServiceCollection services)
 {
     // Add authentication services
-    services.AddAuthentication(
-        options => options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme);
-
-    // Code omitted for brevity...
-}
-
-// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IOptions<Auth0Settings> auth0Settings)
-{
-    // Code omitted for brevity...
-
-    // Add the cookie middleware
-    app.UseCookieAuthentication(new CookieAuthenticationOptions
-    {
-        AutomaticAuthenticate = true,
-        AutomaticChallenge = true
-    });
-
-    // Add the OIDC middleware
-    app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions("Auth0")
-    {
+    services.AddAuthentication(options => {
+        options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    })
+    .AddCookie()
+    .AddOpenIdConnect("Auth0", options => {
         // Set the authority to your Auth0 domain
-        Authority = $"https://{auth0Settings.Value.Domain}",
+        options.Authority = $"https://{Configuration["Auth0:Domain"]}";
 
         // Configure the Auth0 Client ID and Client Secret
-        ClientId = auth0Settings.Value.ClientId,
-        ClientSecret = auth0Settings.Value.ClientSecret,
-
-        // Do not automatically authenticate and challenge
-        AutomaticAuthenticate = false,
-        AutomaticChallenge = false,
+        options.ClientId = Configuration["Auth0:ClientId"];
+        options.ClientSecret = Configuration["Auth0:ClientSecret"];
 
         // Set response type to code
-        ResponseType = "code",
+        options.ResponseType = "code";
+
+        // Configure the scope
+        options.Scope.Clear();
+        options.Scope.Add("openid");
 
         // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
         // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
-        CallbackPath = new PathString("/signin-auth0"),
+        options.CallbackPath = new PathString("/signin-auth0");
 
         // Configure the Claims Issuer to be Auth0
-        ClaimsIssuer = "Auth0"
+        options.ClaimsIssuer = "Auth0";        
     });
+
+    // Add framework services.
+    services.AddMvc();
+}
+```
+
+### 2. Register the Authentication middleware
+
+```csharp
+public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+{
+    if (env.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+    }
+    else
+    {
+        app.UseExceptionHandler("/Home/Error");
+    }
+
+    app.UseStaticFiles();
+
+    // Register the Authentication middleware
+    app.UseAuthentication();
 
     app.UseMvc(routes =>
     {
@@ -95,7 +92,7 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerF
 }
 ```
 
-### 2. Challenge the OIDC middleware to log the user in
+### 3. Challenge the OIDC middleware to log the user in
 
 To log the user in, simply challenge the OIDC middleware. This will redirect to Auth0 to authenticate the user.
 
@@ -104,46 +101,48 @@ To log the user in, simply challenge the OIDC middleware. This will redirect to 
 
 public IActionResult Login(string returnUrl = "/")
 {
-    return new ChallengeResult("Auth0", new AuthenticationProperties() { RedirectUri = returnUrl });
+    await HttpContext.ChallengeAsync("Auth0", new AuthenticationProperties() { RedirectUri = returnUrl });
 }
 ```
 
-### 3. Log the user out
+### 4. Log the user out
 
 To log the user out, call the `SignOutAsync` method for both the OIDC middleware as well as the Cookie middleware.
 
-```
+```csharp
 // Controllers/AccountController.cs
 
 [Authorize]
 public async Task Logout()
 {
-    await HttpContext.Authentication.SignOutAsync("Auth0", new AuthenticationProperties
+    await HttpContext.SignOutAsync("Auth0", new AuthenticationProperties
     {
         // Indicate here where Auth0 should redirect the user after a logout.
         // Note that the resulting absolute Uri must be whitelisted in the 
         // **Allowed Logout URLs** settings for the client.
         RedirectUri = Url.Action("Index", "Home")
     });
-    await HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 }
 ```
 
 When configuring the OIDC middleware, you will have to handle the `OnRedirectToIdentityProviderForSignOut` event to redirect
 the user to the [Auth0 logout endpoint](https://auth0.com/docs/logout#log-out-a-user):
 
-```
-// Add the OIDC middleware
-var options = new OpenIdConnectOptions("Auth0")
-{
-    // other options ommited for brevity
-    [...],
-    Events = new OpenIdConnectEvents
+```csharp
+services.AddAuthentication(options => {
+    // Code omitted for brevity
+})
+.AddCookie()
+.AddOpenIdConnect("Auth0", options => {
+    // Code omitted for brevity
+
+    options.Events = new OpenIdConnectEvents
     {
         // handle the logout redirection 
         OnRedirectToIdentityProviderForSignOut = (context) =>
         {
-            var logoutUri = $"https://{auth0Settings.Value.Domain}/v2/logout?client_id={auth0Settings.Value.ClientId}";
+            var logoutUri = $"https://{Configuration["Auth0:Domain"]}/v2/logout?client_id={Configuration["Auth0:ClientId"]}";
 
             var postLogoutUri = context.Properties.RedirectUri;
             if (!string.IsNullOrEmpty(postLogoutUri))
@@ -162,27 +161,24 @@ var options = new OpenIdConnectOptions("Auth0")
 
             return Task.CompletedTask;
         }
-    }
-};
-[...]
-app.UseOpenIdConnectAuthentication(options);
+    };   
+});
 ```
-
 
 ## Passing additional parameters to the /authorize endpoint
 
 When asking Auth0 to authenticate a user, you might want to provide additional parameters to the `/authorize` endpoint, such as the `connection`, `offline_access`, `audience` or others. In order to do so, you need to handle the `OnRedirectToIdentityProvider` event when configuring the `OpenIdConnectionOptions` and call the `ProtocolMessage.SetParameter` method on the supplied `RedirectContext`:
 
-```
+```csharp
 // Add the OIDC middleware
-app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions("Auth0")
-{
-    // Set the authority to your Auth0 domain
-    Authority = $"https://{auth0Settings.Value.Domain}",
-
-    [...], // other options
+services.AddAuthentication(options => {
+    // Code omitted for brevity
+})
+.AddCookie()
+.AddOpenIdConnect("Auth0", options => {
+    // Code omitted for brevity
     
-    Events = new OpenIdConnectEvents
+    options.Events = new OpenIdConnectEvents
     {
         OnRedirectToIdentityProvider = context =>
         {
@@ -191,7 +187,7 @@ app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions("Auth0")
 
             return Task.CompletedTask;
         }
-    }    
+    };
 });
 ```
 
