@@ -16,97 +16,60 @@ namespace SampleMvcApp
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
 
-        public IConfigurationRoot Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             // Add authentication services
-            services.AddAuthentication(
-                options => options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme);
-
-            // Add framework services.
-            services.AddMvc();
-
-            // Add functionality to inject IOptions<T>
-            services.AddOptions();
-
-            // Add the Auth0 Settings object so it can be injected
-            services.Configure<Auth0Settings>(Configuration.GetSection("Auth0"));
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IOptions<Auth0Settings> auth0Settings)
-        {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
-
-            app.UseStaticFiles();
-
-            // Add the cookie middleware
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
-            {
-                AutomaticAuthenticate = true,
-                AutomaticChallenge = true
-            });
-
-            // Add the OIDC middleware
-            var options = new OpenIdConnectOptions("Auth0")
-            {
+            services.AddAuthentication(options => {
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+            .AddCookie()
+            .AddOpenIdConnect("Auth0", options => {
                 // Set the authority to your Auth0 domain
-                Authority = $"https://{auth0Settings.Value.Domain}",
+                options.Authority = $"https://{Configuration["Auth0:Domain"]}";
 
                 // Configure the Auth0 Client ID and Client Secret
-                ClientId = auth0Settings.Value.ClientId,
-                ClientSecret = auth0Settings.Value.ClientSecret,
-
-                // Do not automatically authenticate and challenge
-                AutomaticAuthenticate = false,
-                AutomaticChallenge = false,
+                options.ClientId = Configuration["Auth0:ClientId"];
+                options.ClientSecret = Configuration["Auth0:ClientSecret"];
 
                 // Set response type to code
-                ResponseType = "code",
+                options.ResponseType = "code";
+
+                // Configure the scope
+                options.Scope.Clear();
+                options.Scope.Add("openid");
+                options.Scope.Add("profile");
+                options.Scope.Add("email");
 
                 // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
                 // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
-                CallbackPath = new PathString("/signin-auth0"),
+                options.CallbackPath = new PathString("/signin-auth0");
 
                 // Configure the Claims Issuer to be Auth0
-                ClaimsIssuer = "Auth0",
+                options.ClaimsIssuer = "Auth0";
 
                 // Set the correct name claim type
-                TokenValidationParameters = new TokenValidationParameters
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
                     NameClaimType = "name",
                     RoleClaimType = "https://schemas.quickstarts.com/roles"
-                },
+                };
 
-                Events = new OpenIdConnectEvents
+                options.Events = new OpenIdConnectEvents
                 {
                     // handle the logout redirection 
                     OnRedirectToIdentityProviderForSignOut = (context) =>
                     {
-                        var logoutUri = $"https://{auth0Settings.Value.Domain}/v2/logout?client_id={auth0Settings.Value.ClientId}";
+                        var logoutUri = $"https://{Configuration["Auth0:Domain"]}/v2/logout?client_id={Configuration["Auth0:ClientId"]}";
 
                         var postLogoutUri = context.Properties.RedirectUri;
                         if (!string.IsNullOrEmpty(postLogoutUri))
@@ -125,12 +88,28 @@ namespace SampleMvcApp
 
                         return Task.CompletedTask;
                     }
-                }
-            };
-            options.Scope.Clear();
-            options.Scope.Add("openid");
-            options.Scope.Add("profile");
-            app.UseOpenIdConnectAuthentication(options);
+                };   
+            });
+
+            // Add framework services.
+            services.AddMvc();
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
+
+            app.UseStaticFiles();
+
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

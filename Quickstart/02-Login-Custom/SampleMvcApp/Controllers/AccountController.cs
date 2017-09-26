@@ -1,8 +1,8 @@
 ﻿using Auth0.AuthenticationApi;
 using Auth0.AuthenticationApi.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using SampleMvcApp.ViewModels;
@@ -10,16 +10,18 @@ using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Localization.Internal;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Extensions.Configuration;
 
 namespace SampleMvcApp.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly Auth0Settings _auth0Settings;
+        private readonly IConfiguration _configuration;
 
-        public AccountController(IOptions<Auth0Settings> auth0Settings)
+        public AccountController(IConfiguration configuration)
         {
-            _auth0Settings = auth0Settings.Value;
+            this._configuration = configuration;
         }
 
         [HttpGet]
@@ -37,12 +39,12 @@ namespace SampleMvcApp.Controllers
             {
                 try
                 {
-                    AuthenticationApiClient client = new AuthenticationApiClient(new Uri($"https://{_auth0Settings.Domain}/"));
+                    AuthenticationApiClient client = new AuthenticationApiClient(new Uri($"https://{_configuration["Auth0:Domain"]}/"));
 
                     var result = await client.GetTokenAsync(new ResourceOwnerTokenRequest
                     {
-                        ClientId = _auth0Settings.ClientId,
-                        ClientSecret = _auth0Settings.ClientSecret,
+                        ClientId = _configuration["Auth0:ClientId"],
+                        ClientSecret = _configuration["Auth0:ClientSecret"],
                         Scope = "openid profile",
                         Realm = "Username-Password-Authentication", // Specify the correct name of your DB connection
                         Username = vm.EmailAddress,
@@ -55,13 +57,13 @@ namespace SampleMvcApp.Controllers
                     // Create claims principal
                     var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
                     {
-                        new Claim(ClaimTypes.NameIdentifier, user.UserId), 
+                        new Claim(ClaimTypes.NameIdentifier, user.UserId),
                         new Claim(ClaimTypes.Name, user.FullName)
 
                     }, CookieAuthenticationDefaults.AuthenticationScheme));
 
                     // Sign user into cookie middleware
-                    await HttpContext.Authentication.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
 
                     return RedirectToLocal(returnUrl);
                 }
@@ -75,27 +77,27 @@ namespace SampleMvcApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult LoginExternal(string connection, string returnUrl = "/")
+        public async Task LoginExternal(string connection, string returnUrl = "/")
         {
             var properties = new AuthenticationProperties() { RedirectUri = returnUrl };
 
             if (!string.IsNullOrEmpty(connection))
                 properties.Items.Add("connection", connection);
 
-            return new ChallengeResult("Auth0", properties);
+            await HttpContext.ChallengeAsync("Auth0", properties);
         }
 
         [Authorize]
         public async Task Logout()
         {
-            await HttpContext.Authentication.SignOutAsync("Auth0", new AuthenticationProperties
+            await HttpContext.SignOutAsync("Auth0", new AuthenticationProperties
             {
                 // Indicate here where Auth0 should redirect the user after a logout.
                 // Note that the resulting absolute Uri must be whitelisted in the 
                 // **Allowed Logout URLs** settings for the client.
                 RedirectUri = Url.Action("Index", "Home")
             });
-            await HttpContext.Authentication.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
         /// <summary>

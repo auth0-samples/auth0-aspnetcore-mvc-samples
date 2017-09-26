@@ -4,34 +4,21 @@ This example shows how to add ***Login*** to your application using a custom Log
 
 You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/02-login-custom). 
 
-## Getting Started
+## Requirements
 
-To run this quickstart you can fork and clone this repo.
+* .[NET Core 2.0 SDK](https://www.microsoft.com/net/download/core)
 
-Be sure to update the `appsettings.json` with your Auth0 settings:
+## To run this project
 
-```json
-{
-  "Auth0": {
-    "Domain": "Your Auth0 domain",
-    "ClientId": "Your Auth0 Client Id",
-    "ClientSecret": "Your Auth0 Client Secret",
-    "CallbackUrl": "http://localhost:5000/signin-auth0"
-  } 
-}
-```
+1. Ensure that you have replaced the [appsettings.json](SampleMvcApp/appsettings.json) file with the values for your Auth0 account.
 
-Then restore the NuGet packages and run the application:
+2. Run the application from the command line:
 
-```bash
-# Install the dependencies
-dotnet restore
+    ```bash
+    dotnet run
+    ```
 
-# Run
-dotnet run
-```
-
-You can shut down the web server manually by pressing Ctrl-C.
+3. Go to `http://localhost:5000` in your web browser to view the website.
 
 ## Important Snippets
 
