@@ -32,7 +32,7 @@ namespace SampleMvcApp
                 options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
             })
             .AddCookie()
-            .AddOpenIdConnect("Auth0", options => {
+            .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, "Auth0", options => {
                 // Set the authority to your Auth0 domain
                 options.Authority = $"https://{Configuration["Auth0:Domain"]}";
 
