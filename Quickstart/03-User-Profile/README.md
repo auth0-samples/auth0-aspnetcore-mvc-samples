@@ -2,7 +2,7 @@
 
 This example shows how to extract user profile information from claims and display the user's profile in your application.
 
-You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/04-user-profile). 
+You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/03-user-profile). 
 
 ## Requirements
 

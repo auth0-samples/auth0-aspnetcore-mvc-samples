@@ -2,7 +2,7 @@
 
 This example shows how to save the `access_token` and `id_token` as claims.
 
-You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/03-storing-tokens). 
+You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/02-storing-tokens). 
 
 ## Requirements
 

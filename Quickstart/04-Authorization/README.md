@@ -2,7 +2,7 @@
 
 This example shows how to allow only users in certain roles to access a particular action.
 
-You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/05-authorization). 
+You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/04-authorization). 
 
 ## Requirements
 
