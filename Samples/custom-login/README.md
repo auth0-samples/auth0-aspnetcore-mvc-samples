@@ -1,6 +1,7 @@
 # Custom Login
 
 This example shows how to add ***Login*** to your application using a custom Login screen and using the [Auth0.NET SDK](https://github.com/auth0/auth0.net) to log the user in.
+Note that it uses the Resource Owner Password Grant, a flow that should be avoided if other alternatives exist, as explained in the [OAuth2 specification](https://tools.ietf.org/html/rfc6749#page-57). We strongly recommend using centralized login (redirecting to the `/authorize` endpoint) whenever possible.
 
 ## Requirements
 
