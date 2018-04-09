@@ -19,6 +19,12 @@ Note that it uses the Resource Owner Password Grant, a flow that should be avoid
 
 3. Go to `http://localhost:5000` in your web browser to view the website.
 
+## To run this project with docker
+
+In order to run the example with docker you need to have **Docker** installed.
+
+Execute in command line `sh exec.sh` to run the Docker in Linux or macOS, or `.\exec.ps1` to run the Docker in Windows.
+
 ## Important Snippets
 
 ### 1. The LoginViewModel

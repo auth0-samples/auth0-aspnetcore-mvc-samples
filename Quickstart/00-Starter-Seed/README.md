@@ -20,3 +20,8 @@ This starter seed is a basic web application which was created using the Yeoman 
 
 3. Go to `http://localhost:5000` in your web browser to view the website.
 
+## To run this project with docker
+
+In order to run the example with docker you need to have **Docker** installed.
+
+Execute in command line `sh exec.sh` to run the Docker in Linux or macOS, or `.\exec.ps1` to run the Docker in Windows.
