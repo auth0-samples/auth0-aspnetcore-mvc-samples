@@ -2,10 +2,10 @@ FROM microsoft/aspnetcore-build
 
 WORKDIR /source
 
-COPY *.csproj .
+COPY SampleMvcApp/*.csproj .
 RUN ["dotnet", "restore"]
 
-COPY . .
+COPY SampleMvcApp/. .
 RUN ["dotnet", "build"]
 
 EXPOSE 3000/tcp
