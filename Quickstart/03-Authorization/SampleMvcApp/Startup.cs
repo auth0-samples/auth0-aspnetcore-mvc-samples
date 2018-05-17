@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Tokens;
 
 namespace SampleMvcApp
 {
@@ -93,8 +94,12 @@ namespace SampleMvcApp
                 // Configure the Claims Issuer to be Auth0
                 ClaimsIssuer = "Auth0",
 
-                // Saves tokens to the AuthenticationProperties
-                SaveTokens = true,
+                // Set the correct name claim type
+                TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = "name",
+                    RoleClaimType = "https://schemas.quickstarts.com/roles"
+                },
 
                 Events = new OpenIdConnectEvents
                 {
@@ -124,6 +129,7 @@ namespace SampleMvcApp
             };
             options.Scope.Clear();
             options.Scope.Add("openid");
+            options.Scope.Add("profile");
             app.UseOpenIdConnectAuthentication(options);
 
             app.UseMvc(routes =>
