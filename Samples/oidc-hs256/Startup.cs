@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -27,12 +28,19 @@ namespace AspNetCoreOidcSample
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
             // Get the client secret used for signing the tokens
             var keyAsBytes = Encoding.UTF8.GetBytes(Configuration["Auth0:ClientSecret"]);
             
-            // if using non-base64 encoded key, just use:
-            //var keyAsBase64 = auth0Settings.Value.ClientSecret.Replace('_', '/').Replace('-', '+');
-            //var keyAsBytes = Convert.FromBase64String(keyAsBase64);
+            // if using base64 encoded key, use:
+            // var keyAsBase64 = Configuration["Auth0:ClientSecret"].Replace('_', '/').Replace('-', '+');
+            // var keyAsBytes = Convert.FromBase64String(keyAsBase64);
 
             var issuerSigningKey = new SymmetricSecurityKey(keyAsBytes);
 
@@ -101,11 +109,12 @@ namespace AspNetCoreOidcSample
             });
             
             // Add framework services.
-            services.AddMvc();
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IOptions<Auth0Settings> auth0Settings)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -113,14 +122,16 @@ namespace AspNetCoreOidcSample
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
             }
 
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseCookiePolicy();
 
             app.UseAuthentication();
 
