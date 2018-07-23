@@ -36,11 +36,11 @@
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li><a asp-controller="Account" asp-action="Profile">Hello @User.Identity.Name!</a></li>
-                        <li><a asp-controller="Account" asp-action="Logout">Logout</a></li>
+                        <li><a id="qsLogoutBtn" asp-controller="Account" asp-action="Logout">Logout</a></li>
                     }
                     else
                     {
-                        <li><a asp-controller="Account" asp-action="Login">Login</a></li>
+                        <li><a id="qsLoginBtn" asp-controller="Account" asp-action="Login">Login</a></li>
                     }
                 </ul>
             </div>
