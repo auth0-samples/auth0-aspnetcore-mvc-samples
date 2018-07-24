@@ -61,7 +61,7 @@ jobs:
     machine: true
     environment:
       - AUTH0_CFG: Quickstart/02-User-Profile/SampleMvcApp/appsettings.json
-      - SAMPLE_PATH: Quickstart/01-Login
+      - SAMPLE_PATH: Quickstart/02-User-Profile
     <<: *defaults
   03-authorization:
     machine: true
