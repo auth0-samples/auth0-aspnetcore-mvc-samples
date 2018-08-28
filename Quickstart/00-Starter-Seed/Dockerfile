@@ -1,11 +1,11 @@
-FROM microsoft/aspnetcore-build
+FROM microsoft/dotnet:2.1-sdk
 
 WORKDIR /source
 
-COPY SampleMvcApp/*.csproj .
+COPY *.csproj .
 RUN ["dotnet", "restore"]
 
-COPY SampleMvcApp/. .
+COPY . .
 RUN ["dotnet", "build"]
 
 EXPOSE 3000/tcp
