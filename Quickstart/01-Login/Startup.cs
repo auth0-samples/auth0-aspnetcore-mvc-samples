@@ -57,8 +57,8 @@ namespace SampleMvcApp
                 options.Scope.Clear();
                 options.Scope.Add("openid");
 
-                // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
-                // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
+                // Set the callback path, so Auth0 will call back to http://localhost:3000/signin-auth0
+                // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard
                 options.CallbackPath = new PathString("/signin-auth0");
 
                 // Configure the Claims Issuer to be Auth0
@@ -111,7 +111,6 @@ namespace SampleMvcApp
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
