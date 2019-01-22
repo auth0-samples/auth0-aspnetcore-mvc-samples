@@ -6,7 +6,7 @@ You can read a quickstart for this sample [here](https://auth0.com/docs/quicksta
 
 ## Requirements
 
-* .[NET Core 2.0 SDK](https://www.microsoft.com/net/download/core)
+* .[NET Core 2.1 SDK](https://www.microsoft.com/net/download/core)
 
 ## To run this project
 
@@ -18,7 +18,7 @@ You can read a quickstart for this sample [here](https://auth0.com/docs/quicksta
     dotnet run
     ```
 
-3. Go to `http://localhost:5000` in your web browser to view the website.
+3. Go to `http://localhost:3000` in your web browser to view the website.
 
 ## To run this project with docker
 

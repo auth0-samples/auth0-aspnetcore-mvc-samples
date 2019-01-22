@@ -37,7 +37,7 @@ namespace AspNetCoreOidcSample
 
             // Get the client secret used for signing the tokens
             var keyAsBytes = Encoding.UTF8.GetBytes(Configuration["Auth0:ClientSecret"]);
-            
+
             // if using base64 encoded key, use:
             // var keyAsBase64 = Configuration["Auth0:ClientSecret"].Replace('_', '/').Replace('-', '+');
             // var keyAsBytes = Convert.FromBase64String(keyAsBase64);
@@ -68,9 +68,9 @@ namespace AspNetCoreOidcSample
                 options.Scope.Add("profile");
                 options.Scope.Add("email");
 
-                // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
-                // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
-                options.CallbackPath = new PathString("/signin-auth0");
+                // Set the callback path, so Auth0 will call back to http://localhost:3000/callback
+                // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard
+                options.CallbackPath = new PathString("/callback");
 
                 // Configure the Claims Issuer to be Auth0
                 options.ClaimsIssuer = "Auth0";
@@ -83,7 +83,7 @@ namespace AspNetCoreOidcSample
 
                 options.Events = new OpenIdConnectEvents
                 {
-                    // handle the logout redirection 
+                    // handle the logout redirection
                     OnRedirectToIdentityProviderForSignOut = (context) =>
                     {
                         var logoutUri = $"https://{Configuration["Auth0:Domain"]}/v2/logout?client_id={Configuration["Auth0:ClientId"]}";
@@ -105,9 +105,9 @@ namespace AspNetCoreOidcSample
 
                         return Task.CompletedTask;
                     }
-                };   
+                };
             });
-            
+
             // Add framework services.
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -144,4 +144,3 @@ namespace AspNetCoreOidcSample
         }
     }
 }
-

@@ -6,7 +6,7 @@ For more information on how to use Auth0 with ASP.NET Core, please look at the [
 
 ## Requirements
 
-* .[NET Core 2.0 SDK](https://www.microsoft.com/net/download/core)
+* .[NET Core 2.1 SDK](https://www.microsoft.com/net/download/core)
 
 ## To run this project
 
@@ -20,7 +20,7 @@ For more information on how to use Auth0 with ASP.NET Core, please look at the [
     dotnet run
     ```
 
-4. Go to `http://localhost:5000` in your web browser to view the website.
+4. Go to `http://localhost:3000` in your web browser to view the website.
 
 ## To run this project with docker
 
@@ -39,7 +39,7 @@ public void ConfigureServices(IServiceCollection services)
 {
     // Get the client secret used for signing the tokens
     var keyAsBytes = Encoding.UTF8.GetBytes(Configuration["Auth0:ClientSecret"]);
-    
+
     // if using non-base64 encoded key, just use:
     //var keyAsBase64 = auth0Settings.Value.ClientSecret.Replace('_', '/').Replace('-', '+');
     //var keyAsBytes = Convert.FromBase64String(keyAsBase64);
@@ -70,9 +70,9 @@ public void ConfigureServices(IServiceCollection services)
         options.Scope.Add("profile");
         options.Scope.Add("email");
 
-        // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
-        // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
-        options.CallbackPath = new PathString("/signin-auth0");
+        // Set the callback path, so Auth0 will call back to http://localhost:3000/callback
+        // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard
+        options.CallbackPath = new PathString("/callback");
 
         // Configure the Claims Issuer to be Auth0
         options.ClaimsIssuer = "Auth0";
@@ -85,7 +85,7 @@ public void ConfigureServices(IServiceCollection services)
 
         options.Events = new OpenIdConnectEvents
         {
-            // handle the logout redirection 
+            // handle the logout redirection
             OnRedirectToIdentityProviderForSignOut = (context) =>
             {
                 var logoutUri = $"https://{Configuration["Auth0:Domain"]}/v2/logout?client_id={Configuration["Auth0:ClientId"]}";
@@ -107,9 +107,9 @@ public void ConfigureServices(IServiceCollection services)
 
                 return Task.CompletedTask;
             }
-        };   
+        };
     });
-    
+
     // Add framework services.
     services.AddMvc();
 }
@@ -167,7 +167,7 @@ public class AccountController : Controller
         await HttpContext.SignOutAsync("Auth0", new AuthenticationProperties
         {
             // Indicate here where Auth0 should redirect the user after a logout.
-            // Note that the resulting absolute Uri must be whitelisted in the 
+            // Note that the resulting absolute Uri must be whitelisted in the
             // **Allowed Logout URLs** settings for the client.
             RedirectUri = Url.Action("Index", "Home")
         });

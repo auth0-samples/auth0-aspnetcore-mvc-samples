@@ -1,10 +1,10 @@
 # ASP.NET Core OAuth2 Sample
 
-This sample demonstrates how you can configure the standard OAuth2 middleware to authenticate users of an ASP.NET Core MVC application using Auth0. 
+This sample demonstrates how you can configure the standard OAuth2 middleware to authenticate users of an ASP.NET Core MVC application using Auth0.
 
 ## Requirements
 
-* .[NET Core 2.0 SDK](https://www.microsoft.com/net/download/core)
+* .[NET Core 2.1 SDK](https://www.microsoft.com/net/download/core)
 
 ## To run this project
 
@@ -16,7 +16,7 @@ This sample demonstrates how you can configure the standard OAuth2 middleware to
     dotnet run
     ```
 
-3. Go to `http://localhost:5000` in your web browser to view the website.
+3. Go to `http://localhost:3000` in your web browser to view the website.
 
 ## To run this project with docker
 
@@ -28,7 +28,7 @@ Execute in command line `sh exec.sh` to run the Docker in Linux or macOS, or `.\
 
 ### 1. Configure your Auth0 application
 
-Go to the Auth0 Dashboard and ensure that you add the URL http://localhost:5000/signin-auth0 to your list of callback URLs
+Go to the Auth0 Dashboard and ensure that you add the URL http://localhost:3000/callback to your list of callback URLs
 
 ### 2. Configure Authentication Services
 
@@ -51,11 +51,11 @@ public void ConfigureServices(IServiceCollection services)
         options.ClientId = Configuration["Auth0:ClientId"];
         options.ClientSecret = Configuration["Auth0:ClientSecret"];
 
-        // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
-        // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
-        options.CallbackPath = new PathString("/signin-auth0");
+        // Set the callback path, so Auth0 will call back to http://localhost:3000/callback
+        // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard
+        options.CallbackPath = new PathString("/callback");
 
-        // Configure the Auth0 endpoints                
+        // Configure the Auth0 endpoints
         options.AuthorizationEndpoint = $"https://{Configuration["Auth0:Domain"]}/authorize";
         options.TokenEndpoint = $"https://{Configuration["Auth0:Domain"]}/oauth/token";
         options.UserInformationEndpoint = $"https://{Configuration["Auth0:Domain"]}/userinfo";
@@ -68,7 +68,7 @@ public void ConfigureServices(IServiceCollection services)
         options.Scope.Clear();
         options.Scope.Add("openid");
         options.Scope.Add("profile");
-        
+
         options.Events = new OAuthEvents
         {
             // When creating a ticket we need to manually make the call to the User Info endpoint to retrieve the user's information,
@@ -100,7 +100,7 @@ public void ConfigureServices(IServiceCollection services)
                     context.Identity.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, email, ClaimValueTypes.String, context.Options.ClaimsIssuer));
                 }
             }
-        };         
+        };
     });
 
     // Add framework services.

@@ -44,11 +44,11 @@ namespace AspNetCoreOAuth2Sample
                 options.ClientId = Configuration["Auth0:ClientId"];
                 options.ClientSecret = Configuration["Auth0:ClientSecret"];
 
-                // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
-                // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
-                options.CallbackPath = new PathString("/signin-auth0");
+                // Set the callback path, so Auth0 will call back to http://localhost:3000/callback
+                // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard
+                options.CallbackPath = new PathString("/callback");
 
-                // Configure the Auth0 endpoints                
+                // Configure the Auth0 endpoints
                 options.AuthorizationEndpoint = $"https://{Configuration["Auth0:Domain"]}/authorize";
                 options.TokenEndpoint = $"https://{Configuration["Auth0:Domain"]}/oauth/token";
                 options.UserInformationEndpoint = $"https://{Configuration["Auth0:Domain"]}/userinfo";
@@ -61,7 +61,7 @@ namespace AspNetCoreOAuth2Sample
                 options.Scope.Clear();
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
-                
+
                 options.Events = new OAuthEvents
                 {
                     // When creating a ticket we need to manually make the call to the User Info endpoint to retrieve the user's information,
@@ -93,7 +93,7 @@ namespace AspNetCoreOAuth2Sample
                             context.Identity.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, email, ClaimValueTypes.String, context.Options.ClaimsIssuer));
                         }
                     }
-                };         
+                };
             });
 
             // Add framework services.

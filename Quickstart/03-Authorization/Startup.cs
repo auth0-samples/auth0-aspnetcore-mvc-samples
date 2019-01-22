@@ -60,9 +60,9 @@ namespace SampleMvcApp
                 options.Scope.Add("profile");
                 options.Scope.Add("email");
 
-                // Set the callback path, so Auth0 will call back to http://localhost:3000/signin-auth0
+                // Set the callback path, so Auth0 will call back to http://localhost:3000/callback
                 // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard
-                options.CallbackPath = new PathString("/signin-auth0");
+                options.CallbackPath = new PathString("/callback");
 
                 // Configure the Claims Issuer to be Auth0
                 options.ClaimsIssuer = "Auth0";
@@ -76,7 +76,7 @@ namespace SampleMvcApp
 
                 options.Events = new OpenIdConnectEvents
                 {
-                    // handle the logout redirection 
+                    // handle the logout redirection
                     OnRedirectToIdentityProviderForSignOut = (context) =>
                     {
                         var logoutUri = $"https://{Configuration["Auth0:Domain"]}/v2/logout?client_id={Configuration["Auth0:ClientId"]}";
@@ -98,7 +98,7 @@ namespace SampleMvcApp
 
                         return Task.CompletedTask;
                     }
-                };   
+                };
             });
 
             // Add framework services.

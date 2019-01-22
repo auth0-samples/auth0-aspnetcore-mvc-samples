@@ -2,11 +2,11 @@
 
 This example shows how to add ***Login/SignUp*** to your application using the hosted version of the `Lock` widget.
 
-You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/01-login). 
+You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/01-login).
 
 ## Requirements
 
-* .[NET Core 2.0 SDK](https://www.microsoft.com/net/download/core)
+* .[NET Core 2.1 SDK](https://www.microsoft.com/net/download/core)
 
 ## To run this project
 
@@ -18,7 +18,7 @@ You can read a quickstart for this sample [here](https://auth0.com/docs/quicksta
     dotnet run
     ```
 
-3. Go to `http://localhost:5000` in your web browser to view the website.
+3. Go to `http://localhost:3000` in your web browser to view the website.
 
 ## To run this project with docker
 
@@ -57,12 +57,12 @@ public void ConfigureServices(IServiceCollection services)
         options.Scope.Clear();
         options.Scope.Add("openid");
 
-        // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
+        // Set the callback path, so Auth0 will call back to http://localhost:3000/callback
         // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
-        options.CallbackPath = new PathString("/signin-auth0");
+        options.CallbackPath = new PathString("/callback");
 
         // Configure the Claims Issuer to be Auth0
-        options.ClaimsIssuer = "Auth0";        
+        options.ClaimsIssuer = "Auth0";
     });
 
     // Add framework services.
@@ -124,7 +124,7 @@ public async Task Logout()
     await HttpContext.SignOutAsync("Auth0", new AuthenticationProperties
     {
         // Indicate here where Auth0 should redirect the user after a logout.
-        // Note that the resulting absolute Uri must be whitelisted in the 
+        // Note that the resulting absolute Uri must be whitelisted in the
         // **Allowed Logout URLs** settings for the client.
         RedirectUri = Url.Action("Index", "Home")
     });
@@ -145,7 +145,7 @@ services.AddAuthentication(options => {
 
     options.Events = new OpenIdConnectEvents
     {
-        // handle the logout redirection 
+        // handle the logout redirection
         OnRedirectToIdentityProviderForSignOut = (context) =>
         {
             var logoutUri = $"https://{Configuration["Auth0:Domain"]}/v2/logout?client_id={Configuration["Auth0:ClientId"]}";
@@ -167,7 +167,7 @@ services.AddAuthentication(options => {
 
             return Task.CompletedTask;
         }
-    };   
+    };
 });
 ```
 
@@ -183,7 +183,7 @@ services.AddAuthentication(options => {
 .AddCookie()
 .AddOpenIdConnect("Auth0", options => {
     // Code omitted for brevity
-    
+
     options.Events = new OpenIdConnectEvents
     {
         OnRedirectToIdentityProvider = context =>
