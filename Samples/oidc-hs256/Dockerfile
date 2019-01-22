@@ -1,4 +1,4 @@
-FROM microsoft/aspnetcore-build
+FROM microsoft/dotnet:2.1-sdk
 
 WORKDIR /source
 
