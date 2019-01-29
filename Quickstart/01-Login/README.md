@@ -112,7 +112,7 @@ public IActionResult Login(string returnUrl = "/")
 
 To log the user out, call the `SignOutAsync` method for both the OIDC middleware as well as the Cookie middleware.
 
-```
+```csharp
 // Controllers/AccountController.cs
 
 [Authorize]
@@ -132,7 +132,7 @@ public async Task Logout()
 When configuring the OIDC middleware, you will have to handle the `OnRedirectToIdentityProviderForSignOut` event to redirect
 the user to the [Auth0 logout endpoint](https://auth0.com/docs/logout#log-out-a-user):
 
-```
+```csharp
 // Add the OIDC middleware
 var options = new OpenIdConnectOptions("Auth0")
 {
@@ -173,7 +173,7 @@ app.UseOpenIdConnectAuthentication(options);
 
 When asking Auth0 to authenticate a user, you might want to provide additional parameters to the `/authorize` endpoint, such as the `connection`, `offline_access`, `audience` or others. In order to do so, you need to handle the `OnRedirectToIdentityProvider` event when configuring the `OpenIdConnectionOptions` and call the `ProtocolMessage.SetParameter` method on the supplied `RedirectContext`:
 
-```
+```csharp
 // Add the OIDC middleware
 app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions("Auth0")
 {
