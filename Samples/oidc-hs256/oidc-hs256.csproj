@@ -6,7 +6,7 @@
     <AssemblyName>AspNetCoreOidcSample</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>oidc-hs256</PackageId>
-    <RuntimeFrameworkVersion>1.0.4</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion>1.1.0</RuntimeFrameworkVersion>
     <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;dnxcore50;portable-net45+win8</PackageTargetFallback>
     <RootNamespace>AspNetCoreOidcSample</RootNamespace>
   </PropertyGroup>
