@@ -80,9 +80,9 @@ namespace AspNetCoreOAuth2Sample
                 ClientId = auth0Settings.Value.ClientId,
                 ClientSecret = auth0Settings.Value.ClientSecret,
 
-                // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
-                // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
-                CallbackPath = new PathString("/signin-auth0"),
+                // Set the callback path, so Auth0 will call back to http://localhost:3000/callback
+                // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard
+                CallbackPath = new PathString("/callback"),
 
                 // Configure the Auth0 endpoints                
                 AuthorizationEndpoint = $"https://{auth0Settings.Value.Domain}/authorize",
