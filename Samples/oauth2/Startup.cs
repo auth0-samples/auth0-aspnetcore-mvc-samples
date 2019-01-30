@@ -84,7 +84,7 @@ namespace AspNetCoreOAuth2Sample
                 // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard
                 CallbackPath = new PathString("/callback"),
 
-                // Configure the Auth0 endpoints                
+                // Configure the Auth0 endpoints
                 AuthorizationEndpoint = $"https://{auth0Settings.Value.Domain}/authorize",
                 TokenEndpoint = $"https://{auth0Settings.Value.Domain}/oauth/token",
                 UserInformationEndpoint = $"https://{auth0Settings.Value.Domain}/userinfo",
@@ -95,7 +95,7 @@ namespace AspNetCoreOAuth2Sample
 
                 // Set scope to openid. See https://auth0.com/docs/scopes
                 Scope = { "openid" },
-                
+
                 Events = new OAuthEvents
                 {
                     // When creating a ticket we need to manually make the call to the User Info endpoint to retrieve the user's information,
@@ -137,11 +137,11 @@ namespace AspNetCoreOAuth2Sample
                             if (context.Properties.Items.ContainsKey(".TokenNames"))
                             {
                                 string[] tokenNames = context.Properties.Items[".TokenNames"].Split(';');
-                                
+
                                 foreach(string tokenName in tokenNames)
                                 {
                                     string tokenValue = context.Properties.Items[$".Token.{tokenName}"];
-                                    
+
                                     if (!identity.HasClaim(c => c.Type == tokenName))
                                         identity.AddClaim(new Claim(tokenName, tokenValue));
                                 }

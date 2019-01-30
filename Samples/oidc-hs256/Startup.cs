@@ -35,7 +35,7 @@ namespace AspNetCoreOidcSample
             // Add authentication services
             services.AddAuthentication(
                 options => options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme);
-            
+
             // Add framework services.
             services.AddMvc();
 
@@ -73,7 +73,7 @@ namespace AspNetCoreOidcSample
 
             // Get the client secret used for signing the tokens
             var keyAsBytes = Encoding.UTF8.GetBytes(auth0Settings.Value.ClientSecret);
-            
+
             // if using non-base64 encoded key, just use:
             //var keyAsBase64 = auth0Settings.Value.ClientSecret.Replace('_', '/').Replace('-', '+');
             //var keyAsBytes = Convert.FromBase64String(keyAsBase64);
@@ -85,13 +85,13 @@ namespace AspNetCoreOidcSample
             {
                 // Set the authority to your Auth0 domain
                 Authority = $"https://{auth0Settings.Value.Domain}",
-                
+
                 // Configure the Auth0 Client ID and Client Secret
                 ClientId = auth0Settings.Value.ClientId,
                 ClientSecret = auth0Settings.Value.ClientSecret,
 
                 // Do not automatically authenticate and challenge
-                AutomaticAuthenticate = false, 
+                AutomaticAuthenticate = false,
                 AutomaticChallenge = false,
 
                 // Set response type to code
@@ -103,14 +103,14 @@ namespace AspNetCoreOidcSample
 
                 // Configure the Claims Issuer to be Auth0
                 ClaimsIssuer = "Auth0",
-                
+
                 // The UserInfo endpoint does not really return any extra claims which were not returned in the original auth response, so
                 // we can save ourselves from making an extra request
                 GetClaimsFromUserInfoEndpoint = false,
 
                 Events = new OpenIdConnectEvents
                 {
-                    // handle the logout redirection 
+                    // handle the logout redirection
                     OnRedirectToIdentityProviderForSignOut = (context) =>
                     {
                         var logoutUri = $"https://{auth0Settings.Value.Domain}/v2/logout?client_id={auth0Settings.Value.ClientId}";
@@ -140,7 +140,7 @@ namespace AspNetCoreOidcSample
                     IssuerSigningKey = issuerSigningKey
                 }
             });
-            
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -150,4 +150,3 @@ namespace AspNetCoreOidcSample
         }
     }
 }
-

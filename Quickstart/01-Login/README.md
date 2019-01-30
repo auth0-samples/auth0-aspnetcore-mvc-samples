@@ -2,7 +2,7 @@
 
 This example shows how to add ***Login/SignUp*** to your application using the hosted version of the `Lock` widget.
 
-You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/01-login). 
+You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/01-login).
 
 ## Getting Started
 
@@ -121,7 +121,7 @@ public async Task Logout()
     await HttpContext.Authentication.SignOutAsync("Auth0", new AuthenticationProperties
     {
         // Indicate here where Auth0 should redirect the user after a logout.
-        // Note that the resulting absolute Uri must be whitelisted in the 
+        // Note that the resulting absolute Uri must be whitelisted in the
         // **Allowed Logout URLs** settings for the client.
         RedirectUri = Url.Action("Index", "Home")
     });
@@ -140,7 +140,7 @@ var options = new OpenIdConnectOptions("Auth0")
     [...],
     Events = new OpenIdConnectEvents
     {
-        // handle the logout redirection 
+        // handle the logout redirection
         OnRedirectToIdentityProviderForSignOut = (context) =>
         {
             var logoutUri = $"https://{auth0Settings.Value.Domain}/v2/logout?client_id={auth0Settings.Value.ClientId}";
@@ -181,7 +181,7 @@ app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions("Auth0")
     Authority = $"https://{auth0Settings.Value.Domain}",
 
     [...], // other options
-    
+
     Events = new OpenIdConnectEvents
     {
         OnRedirectToIdentityProvider = context =>
@@ -191,7 +191,7 @@ app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions("Auth0")
 
             return Task.CompletedTask;
         }
-    }    
+    }
 });
 ```
 

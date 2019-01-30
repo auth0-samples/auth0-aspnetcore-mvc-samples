@@ -28,7 +28,7 @@ public void ConfigureServices(IServiceCollection services)
     // Add authentication services
     services.AddAuthentication(
         options => options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme);
-            
+
     // Add framework services.
     services.AddMvc();
 
@@ -61,13 +61,13 @@ app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions("Auth0")
 {
     // Set the authority to your Auth0 domain
     Authority = $"https://{auth0Settings.Value.Domain}",
-                
+
     // Configure the Auth0 Client ID and Client Secret
     ClientId = auth0Settings.Value.ClientId,
     ClientSecret = auth0Settings.Value.ClientSecret,
 
     // Do not automatically authenticate and challenge
-    AutomaticAuthenticate = false, 
+    AutomaticAuthenticate = false,
     AutomaticChallenge = false,
 
     // Set response type to code
@@ -79,7 +79,7 @@ app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions("Auth0")
 
     // Configure the Claims Issuer to be Auth0
     ClaimsIssuer = "Auth0",
-                
+
     // The UserInfo endpoint does not really return any extra claims which were not returned in the original auth response, so
     // we can save ourselves from making an extra request
     GetClaimsFromUserInfoEndpoint = false,
@@ -110,7 +110,7 @@ public class AccountController : Controller
         await HttpContext.Authentication.SignOutAsync("Auth0", new AuthenticationProperties
         {
             // Indicate here where Auth0 should redirect the user after a logout.
-            // Note that the resulting absolute Uri must be whitelisted in the 
+            // Note that the resulting absolute Uri must be whitelisted in the
             // **Allowed Logout URLs** settings for the client.
             RedirectUri = Url.Action("Index", "Home")
         });
@@ -130,7 +130,7 @@ Be sure to update the appsettings.json with your Auth0 settings:
             "domain": "Your Auth0 domain",
             "clientId": "Your Auth0 Client Id",
             "clientSecret": "Your Auth0 Client Secret"
-        } 
+        }
     }
 
 Then, restore the NuGet and Bower packages and run the application:
@@ -145,4 +145,3 @@ dotnet run
 ```
 
 You can shut down the web server manually by pressing Ctrl-C.
-

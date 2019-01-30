@@ -98,7 +98,7 @@ namespace SampleMvcApp
 
                 Events = new OpenIdConnectEvents
                 {
-                    // handle the logout redirection 
+                    // handle the logout redirection
                     OnRedirectToIdentityProviderForSignOut = (context) =>
                     {
                         var logoutUri = $"https://{auth0Settings.Value.Domain}/v2/logout?client_id={auth0Settings.Value.ClientId}";

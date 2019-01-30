@@ -22,7 +22,7 @@ namespace SampleMvcApp.Controllers
             await HttpContext.Authentication.SignOutAsync("Auth0", new AuthenticationProperties
             {
                 // Indicate here where Auth0 should redirect the user after a logout.
-                // Note that the resulting absolute Uri must be whitelisted in the 
+                // Note that the resulting absolute Uri must be whitelisted in the
                 // **Allowed Logout URLs** settings for the client.
                 RedirectUri = Url.Action("Index", "Home")
             });
@@ -41,7 +41,7 @@ namespace SampleMvcApp.Controllers
             });
         }
 
-        
+
         /// <summary>
         /// This is just a helper action to enable you to easily see all claims related to a user. It helps when debugging your
         /// application to see the in claims populated from the Auth0 ID Token

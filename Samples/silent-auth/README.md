@@ -1,6 +1,6 @@
 # Silent authentication
 
-This example shows how to attempt a [silent authentication](https://auth0.com/docs/api-auth/tutorials/silent-authentication) 
+This example shows how to attempt a [silent authentication](https://auth0.com/docs/api-auth/tutorials/silent-authentication)
 first, and fallback to a regular login if the silent authentication failed.
 
 If you have multiple applications that share the same identity provider (Auth0) and
@@ -41,7 +41,7 @@ You can shut down the web server manually by pressing Ctrl-C.
 ### 1. Add the prompt=none parameter
 
 Silent authentication is triggered by adding the `prompt=none` parameter when
-requesting an authentication. It's up to you to decide to always try silent 
+requesting an authentication. It's up to you to decide to always try silent
 authentication by default, or do it only if specifically requested.
 
 In this sample, we are attempting silent authentication by default, so we handle the
@@ -74,7 +74,7 @@ var options = new OpenIdConnectOptions("Auth0")
 
 ### 2. Handle silent authentication error
 
-Silent authentication can fail for a number of reasons, for instance if the user doesn't have a valid session at the identity provider, or needs to give consent, or needs to be redirected to another please. 
+Silent authentication can fail for a number of reasons, for instance if the user doesn't have a valid session at the identity provider, or needs to give consent, or needs to be redirected to another please.
 For each of those cases, Auth0 will return a specific error to the callback URL. We will
 check for those in the `OnMessageReceived` event and, if found, trigger a new
 authentication request, this time signaling that a login is required by adding the `loginrequired` custom property (so that the code above doesn't add the `prompt=none` parameter).
@@ -94,7 +94,7 @@ var options = new OpenIdConnectOptions("Auth0")
         },
         OnMessageReceived = async (context) =>
         {
-            string[] LoginRequiredErrors = 
+            string[] LoginRequiredErrors =
                 { "login_required", "consent_required", "interaction_required" };
             string error;
             context.ProtocolMessage.Parameters.TryGetValue("error", out error);
@@ -112,4 +112,3 @@ var options = new OpenIdConnectOptions("Auth0")
     }
 }
 ```
-

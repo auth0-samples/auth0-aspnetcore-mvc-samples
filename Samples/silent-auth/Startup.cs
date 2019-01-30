@@ -128,7 +128,7 @@ namespace SampleMvcApp
                     },
                     OnMessageReceived = async (context) =>
                     {
-                        string[] LoginRequiredErrors = 
+                        string[] LoginRequiredErrors =
                             { "login_required", "consent_required", "interaction_required" };
                         string error;
                         context.ProtocolMessage.Parameters.TryGetValue("error", out error);

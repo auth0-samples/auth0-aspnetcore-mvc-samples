@@ -55,7 +55,7 @@ namespace SampleMvcApp.Controllers
                     // Create claims principal
                     var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
                     {
-                        new Claim(ClaimTypes.NameIdentifier, user.UserId), 
+                        new Claim(ClaimTypes.NameIdentifier, user.UserId),
                         new Claim(ClaimTypes.Name, user.FullName)
 
                     }, CookieAuthenticationDefaults.AuthenticationScheme));
@@ -91,7 +91,7 @@ namespace SampleMvcApp.Controllers
             await HttpContext.Authentication.SignOutAsync("Auth0", new AuthenticationProperties
             {
                 // Indicate here where Auth0 should redirect the user after a logout.
-                // Note that the resulting absolute Uri must be whitelisted in the 
+                // Note that the resulting absolute Uri must be whitelisted in the
                 // **Allowed Logout URLs** settings for the client.
                 RedirectUri = Url.Action("Index", "Home")
             });

@@ -127,7 +127,7 @@ public async Task<IActionResult> Login(LoginViewModel vm, string returnUrl = nul
             // Create claims principal
             var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, user.UserId), 
+                new Claim(ClaimTypes.NameIdentifier, user.UserId),
                 new Claim(ClaimTypes.Name, user.FullName)
 
             }, CookieAuthenticationDefaults.AuthenticationScheme));
