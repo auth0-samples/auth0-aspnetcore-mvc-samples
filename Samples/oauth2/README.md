@@ -4,7 +4,7 @@ This sample demonstrates how you can configure the standard OAuth2 middleware to
 
 ## 1. Configure your Auth0 application
 
-Go to the Auth0 Dashboard and ensure that you add the URL http://localhost:5000/signin-auth0 to your list of callback URLs
+Go to the Auth0 Dashboard and ensure that you add the URL http://localhost:3000/callback to your list of callback URLs
 
 ## 2. Add the cookie and OAuth NuGet packages
 

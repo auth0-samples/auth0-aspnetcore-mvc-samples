@@ -87,9 +87,9 @@ namespace SampleMvcApp
                 // Set response type to code
                 ResponseType = "code",
 
-                // Set the callback path, so Auth0 will call back to http://localhost:5000/signin-auth0 
-                // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
-                CallbackPath = new PathString("/signin-auth0"),
+                // Set the callback path, so Auth0 will call back to http://localhost:3000/callback
+                // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard
+                CallbackPath = new PathString("/callback"),
 
                 // Configure the Claims Issuer to be Auth0
                 ClaimsIssuer = "Auth0",
@@ -103,7 +103,7 @@ namespace SampleMvcApp
 
                 Events = new OpenIdConnectEvents
                 {
-                    // handle the logout redirection 
+                    // handle the logout redirection
                     OnRedirectToIdentityProviderForSignOut = (context) =>
                     {
                         var logoutUri = $"https://{auth0Settings.Value.Domain}/v2/logout?client_id={auth0Settings.Value.ClientId}";

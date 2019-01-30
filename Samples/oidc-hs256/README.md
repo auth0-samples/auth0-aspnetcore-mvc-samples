@@ -8,7 +8,7 @@ For more information on how to use Auth0 with ASP.NET Core, please look at the [
 
 Go to the [Auth0 Dashboard](https://manage.auth0.com) and ensure that you:
 
-* Add the URL `http://localhost:5000/signin-auth0` to your list of callback URLs
+* Add the URL `http://localhost:3000/callback` to your list of callback URLs
 * Configure your application to sign JWT using HS256 (you find this under Settings > Show Advanced Settings > OAuth > JsonWebToken Signature Algorithm)
 
 ## 2. Add the cookie and OIDC NuGet packages

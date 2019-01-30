@@ -12,5 +12,4 @@ dotnet restore
 dotnet run
 ```
 
-Then go to `http://localhost:5000` in your web browser to view the website.
-
+Then go to `http://localhost:3000` in your web browser to view the website.
