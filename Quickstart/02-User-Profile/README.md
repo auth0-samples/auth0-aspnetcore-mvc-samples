@@ -2,11 +2,11 @@
 
 This example shows how to extract user profile information from claims and display the user's profile in your application.
 
-You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/03-user-profile). 
+You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/03-user-profile).
 
 ## Requirements
 
-* .[NET Core 2.0 SDK](https://www.microsoft.com/net/download/core)
+* .[NET Core 2.1 SDK](https://www.microsoft.com/net/download/core)
 
 ## To run this project
 
@@ -18,7 +18,7 @@ You can read a quickstart for this sample [here](https://auth0.com/docs/quicksta
     dotnet run
     ```
 
-3. Go to `http://localhost:5000` in your web browser to view the website.
+3. Go to `http://localhost:3000` in your web browser to view the website.
 
 ## To run this project with docker
 

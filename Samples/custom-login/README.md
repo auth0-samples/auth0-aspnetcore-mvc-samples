@@ -5,7 +5,7 @@ Note that it uses the Resource Owner Password Grant, a flow that should be avoid
 
 ## Requirements
 
-* .[NET Core 2.0 SDK](https://www.microsoft.com/net/download/core)
+* .[NET Core 2.1 SDK](https://www.microsoft.com/net/download/core)
 
 ## To run this project
 
@@ -17,7 +17,7 @@ Note that it uses the Resource Owner Password Grant, a flow that should be avoid
     dotnet run
     ```
 
-3. Go to `http://localhost:5000` in your web browser to view the website.
+3. Go to `http://localhost:3000` in your web browser to view the website.
 
 ## To run this project with docker
 
@@ -121,7 +121,7 @@ public async Task<IActionResult> Login(LoginViewModel vm, string returnUrl = nul
             // Create claims principal
             var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, user.UserId), 
+                new Claim(ClaimTypes.NameIdentifier, user.UserId),
                 new Claim(ClaimTypes.Name, user.FullName)
 
             }, CookieAuthenticationDefaults.AuthenticationScheme));
