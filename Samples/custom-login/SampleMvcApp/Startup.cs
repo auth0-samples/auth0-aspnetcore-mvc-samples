@@ -70,7 +70,8 @@ namespace SampleMvcApp
                         if (context.Properties.Items.ContainsKey("connection"))
                             context.ProtocolMessage.SetParameter("connection", context.Properties.Items["connection"]);
 
-                        return Task.FromResult(0);
+                        return Task.CompletedTask;
+
                     },
                     // handle the logout redirection
                     OnRedirectToIdentityProviderForSignOut = (context) =>
