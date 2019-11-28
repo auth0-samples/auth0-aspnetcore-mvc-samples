@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using SampleMvcApp.ViewModels;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SampleMvcApp.ViewModels;
 
 namespace SampleMvcApp.Controllers
 {
@@ -40,7 +41,6 @@ namespace SampleMvcApp.Controllers
                 ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
             });
         }
-
 
         /// <summary>
         /// This is just a helper action to enable you to easily see all claims related to a user. It helps when debugging your

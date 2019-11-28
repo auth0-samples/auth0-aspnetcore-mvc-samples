@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:3000/",
+      "applicationUrl": "http://localhost:3000",
       "sslPort": 0
     }
   },
@@ -15,13 +15,13 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "AspNetCoreOidcSample": {
+    "oidc_hs256": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "http://localhost:3000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "http://localhost:3000"
     }
   }
 }

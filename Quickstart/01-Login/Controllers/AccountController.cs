@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace SampleMvcApp.Controllers
 {
@@ -34,11 +36,6 @@ namespace SampleMvcApp.Controllers
         /// <returns></returns>
         [Authorize]
         public IActionResult Claims()
-        {
-            return View();
-        }
-
-        public IActionResult AccessDenied()
         {
             return View();
         }

@@ -1,30 +1,29 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 
 namespace SampleMvcApp
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            HostingEnvironment = hostingEnvironment;
         }
 
         public IConfiguration Configuration { get; }
-        public IHostingEnvironment HostingEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -32,7 +31,7 @@ namespace SampleMvcApp
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => HostingEnvironment.IsProduction();
+                options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
@@ -42,8 +41,9 @@ namespace SampleMvcApp
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
-            .AddCookie()
-            .AddOpenIdConnect("Auth0", options => {
+                .AddCookie()
+                .AddOpenIdConnect("Auth0", options =>
+            {
                 // Set the authority to your Auth0 domain
                 options.Authority = $"https://{Configuration["Auth0:Domain"]}";
 
@@ -52,10 +52,9 @@ namespace SampleMvcApp
                 options.ClientSecret = Configuration["Auth0:ClientSecret"];
 
                 // Set response type to code
-                options.ResponseType = "code";
+                options.ResponseType = OpenIdConnectResponseType.Code;
 
                 // Configure the scope
-                options.Scope.Clear();
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
                 options.Scope.Add("email");
@@ -67,12 +66,17 @@ namespace SampleMvcApp
                 // Configure the Claims Issuer to be Auth0
                 options.ClaimsIssuer = "Auth0";
 
+                // Saves tokens to the AuthenticationProperties
+                options.SaveTokens = true;
+
                 // Set the correct name claim type
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     NameClaimType = "name",
                     RoleClaimType = "https://schemas.quickstarts.com/roles"
                 };
+
+                options.RequireHttpsMetadata = true;
 
                 options.Events = new OpenIdConnectEvents
                 {
@@ -90,7 +94,7 @@ namespace SampleMvcApp
                                 var request = context.Request;
                                 postLogoutUri = request.Scheme + "://" + request.Host + request.PathBase + postLogoutUri;
                             }
-                            logoutUri += $"&returnTo={ Uri.EscapeDataString(postLogoutUri)}";
+                            logoutUri += $"&returnTo={Uri.EscapeDataString(postLogoutUri)}";
                         }
 
                         context.Response.Redirect(logoutUri);
@@ -100,14 +104,12 @@ namespace SampleMvcApp
                     }
                 };
             });
-
-            // Add framework services.
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddAuthorization();
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -116,19 +118,22 @@ namespace SampleMvcApp
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            app.UseAuthentication();
+            app.UseRouting();
 
-            app.UseMvc(routes =>
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

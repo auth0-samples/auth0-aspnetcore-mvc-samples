@@ -5,7 +5,7 @@ Note that it uses the Resource Owner Password Grant, a flow that should be avoid
 
 ## Requirements
 
-* .[NET Core 2.1 SDK](https://www.microsoft.com/net/download/core)
+* .[NET Core 3.0 SDK](https://www.microsoft.com/net/download/core)
 
 ## To run this project
 

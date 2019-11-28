@@ -1,13 +1,17 @@
-FROM microsoft/dotnet:2.1-sdk
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
+WORKDIR /app
 
-WORKDIR /source
-
+# copy csproj and restore as distinct layers
+COPY *.sln .
 COPY *.csproj .
-RUN ["dotnet", "restore"]
+RUN dotnet restore
 
+# copy everything else and build app
 COPY . .
-RUN ["dotnet", "build"]
+RUN dotnet publish -c Release -o out
 
-EXPOSE 3000/tcp
 
-ENTRYPOINT ["dotnet", "run"]
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS runtime
+WORKDIR /app
+COPY --from=build /app/out ./
+ENTRYPOINT ["dotnet", "AspNetCoreOAuth2Sample.dll"]

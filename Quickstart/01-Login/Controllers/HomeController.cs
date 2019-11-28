@@ -1,14 +1,26 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using SampleMvcApp.Models;
 
 namespace SampleMvcApp.Controllers
 {
     public class HomeController : Controller
     {
-        public async Task<IActionResult> Index()
+        private readonly ILogger<HomeController> _logger;
+
+        public HomeController(ILogger<HomeController> logger)
+        {
+            _logger = logger;
+        }
+
+        public async Task<IActionResult> IndexAsync()
         {
             // If the user is authenticated, then this is how you can get the access_token and id_token
             if (User.Identity.IsAuthenticated)
@@ -21,7 +33,7 @@ namespace SampleMvcApp.Controllers
                 DateTime accessTokenExpiresAt = DateTime.Parse(
                     await HttpContext.GetTokenAsync("expires_at"),
                     CultureInfo.InvariantCulture,
-                    DateTimeStyles.RoundtripKind);
+                    styles: DateTimeStyles.RoundtripKind);
 
                 string idToken = await HttpContext.GetTokenAsync("id_token");
 
@@ -32,9 +44,15 @@ namespace SampleMvcApp.Controllers
             return View();
         }
 
-        public IActionResult Error()
+        public IActionResult Privacy()
         {
             return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

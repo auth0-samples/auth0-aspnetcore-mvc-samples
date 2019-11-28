@@ -4,7 +4,7 @@ This sample demonstrates how you can configure the standard OAuth2 middleware to
 
 ## Requirements
 
-* .[NET Core 2.1 SDK](https://www.microsoft.com/net/download/core)
+* .[NET Core 3.0 SDK](https://www.microsoft.com/net/download/core)
 
 ## To run this project
 
@@ -104,7 +104,8 @@ public void ConfigureServices(IServiceCollection services)
     });
 
     // Add framework services.
-    services.AddMvc();
+    services.AddAuthorization();
+    services.AddControllersWithViews();
 }
 ```
 
@@ -122,17 +123,22 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     else
     {
         app.UseExceptionHandler("/Home/Error");
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        app.UseHsts();
     }
-
     app.UseStaticFiles();
+    app.UseCookiePolicy();
+
+    app.UseRouting();
 
     app.UseAuthentication();
+    app.UseAuthorization();
 
-    app.UseMvc(routes =>
+    app.UseEndpoints(endpoints =>
     {
-        routes.MapRoute(
+        endpoints.MapControllerRoute(
             name: "default",
-            template: "{controller=Home}/{action=Index}/{id?}");
+            pattern: "{controller=Home}/{action=Index}/{id?}");
     });
 }
 ```

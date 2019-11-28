@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCoreOAuth2Sample", "AspNetCoreOAuth2Sample.csproj", "{33DE2E91-838D-4DA9-AF41-271E9C2EDD41}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCoreOAuth2Sample", "AspNetCoreOAuth2Sample.csproj", "{66C2934A-9ADF-45DC-8DD1-45FBBA834A80}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,12 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{33DE2E91-838D-4DA9-AF41-271E9C2EDD41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{33DE2E91-838D-4DA9-AF41-271E9C2EDD41}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{33DE2E91-838D-4DA9-AF41-271E9C2EDD41}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{33DE2E91-838D-4DA9-AF41-271E9C2EDD41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66C2934A-9ADF-45DC-8DD1-45FBBA834A80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66C2934A-9ADF-45DC-8DD1-45FBBA834A80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66C2934A-9ADF-45DC-8DD1-45FBBA834A80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66C2934A-9ADF-45DC-8DD1-45FBBA834A80}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {705FD58B-CB29-4DD2-A526-7FF017B05521}
 	EndGlobalSection
 EndGlobal

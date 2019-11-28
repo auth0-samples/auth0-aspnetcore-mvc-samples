@@ -6,7 +6,7 @@ You can read a quickstart for this sample [here](https://auth0.com/docs/quicksta
 
 ## Requirements
 
-* .[NET Core 2.1 SDK](https://www.microsoft.com/net/download/core)
+* .[NET Core 3.0 SDK](https://www.microsoft.com/net/download/core)
 
 ## To run this project
 
@@ -54,7 +54,6 @@ public void ConfigureServices(IServiceCollection services)
         options.ResponseType = "code";
 
         // Configure the scope
-        options.Scope.Clear();
         options.Scope.Add("openid");
 
         // Set the callback path, so Auth0 will call back to http://localhost:3000/callback
@@ -66,7 +65,7 @@ public void ConfigureServices(IServiceCollection services)
     });
 
     // Add framework services.
-    services.AddMvc();
+    services.AddControllersWithViews();
 }
 ```
 
@@ -82,18 +81,22 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     else
     {
         app.UseExceptionHandler("/Home/Error");
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        app.UseHsts();
     }
-
     app.UseStaticFiles();
+    app.UseCookiePolicy();
 
-    // Register the Authentication middleware
+    app.UseRouting();
+
     app.UseAuthentication();
+    app.UseAuthorization();
 
-    app.UseMvc(routes =>
+    app.UseEndpoints(endpoints =>
     {
-        routes.MapRoute(
+        endpoints.MapControllerRoute(
             name: "default",
-            template: "{controller=Home}/{action=Index}/{id?}");
+            pattern: "{controller=Home}/{action=Index}/{id?}");
     });
 }
 ```
