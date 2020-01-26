@@ -95,7 +95,7 @@ namespace SampleMvcApp
                 };
             });
 
-            services.AddMvc()
+            services.AddMvc(options => options.EnableEndpointRouting = false)
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
 
