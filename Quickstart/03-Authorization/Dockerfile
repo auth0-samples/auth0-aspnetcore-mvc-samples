@@ -1,5 +1,5 @@
-FROM microsoft/dotnet:2.1-sdk
-
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1
+ 
 WORKDIR /source
 
 COPY *.csproj .
