@@ -2,11 +2,11 @@
 
 This example shows how to add ***Login/SignUp*** to your application using the hosted version of the `Lock` widget.
 
-You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/01-login).
+You can read a [quickstart for this sample here](https://auth0.com/docs/quickstart/webapp/aspnet-core-3/01-login).
 
 ## Requirements
 
-* .[NET Core 2.1 SDK](https://www.microsoft.com/net/download/core)
+* .[NET Core 3.1 SDK](https://www.microsoft.com/net/download/core)
 
 ## To run this project
 
