@@ -6,7 +6,7 @@ This starter seed is a basic web application which was created using the Yeoman 
 
 ## Requirements
 
-* .[NET Core 2.1 SDK](https://www.microsoft.com/net/download/core)
+* .[NET Core 3.1 SDK](https://www.microsoft.com/net/download/core)
 
 ## To run this project
 

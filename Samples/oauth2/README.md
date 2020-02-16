@@ -4,7 +4,7 @@ This sample demonstrates how you can configure the standard OAuth2 middleware to
 
 ## Requirements
 
-* .[NET Core 2.1 SDK](https://www.microsoft.com/net/download/core)
+* .[NET Core 3.1 SDK](https://www.microsoft.com/net/download/core)
 
 ## To run this project
 

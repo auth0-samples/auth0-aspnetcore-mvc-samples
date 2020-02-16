@@ -6,7 +6,7 @@ You can read a quickstart for this sample [here](https://auth0.com/docs/quicksta
 
 ## Requirements
 
-* .[NET Core 2.1 SDK](https://www.microsoft.com/net/download/core)
+* .[NET Core 3.1 SDK](https://www.microsoft.com/net/download/core)
 
 ## To run this project
 

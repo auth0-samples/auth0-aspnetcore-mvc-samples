@@ -5,7 +5,7 @@ Note that it uses the Resource Owner Password Grant, a flow that should be avoid
 
 ## Requirements
 
-* .[NET Core 2.1 SDK](https://www.microsoft.com/net/download/core)
+* .[NET Core 3.1 SDK](https://www.microsoft.com/net/download/core)
 
 ## To run this project
 
@@ -104,9 +104,7 @@ public async Task<IActionResult> Login(LoginViewModel vm, string returnUrl = nul
     {
         try
         {
-            AuthenticationApiClient client = new AuthenticationApiClient(new Uri($"https://{_auth0Settings.Domain}/"));
-
-            var result = await client.AuthenticateAsync(new AuthenticationRequest
+            var result = await _client.AuthenticateAsync(new AuthenticationRequest
             {
                 ClientId = _auth0Settings.ClientId,
                 Scope = "openid",
@@ -116,7 +114,7 @@ public async Task<IActionResult> Login(LoginViewModel vm, string returnUrl = nul
             });
 
             // Get user info from token
-            var user = await client.GetTokenInfoAsync(result.IdToken);
+            var user = await _client.GetTokenInfoAsync(result.IdToken);
 
             // Create claims principal
             var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
