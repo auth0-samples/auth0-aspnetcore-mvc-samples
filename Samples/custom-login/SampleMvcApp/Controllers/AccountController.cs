@@ -4,13 +4,10 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using SampleMvcApp.ViewModels;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Localization.Internal;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Configuration;
 
 namespace SampleMvcApp.Controllers
@@ -18,10 +15,12 @@ namespace SampleMvcApp.Controllers
     public class AccountController : Controller
     {
         private readonly IConfiguration _configuration;
+        private readonly AuthenticationApiClient _client;
 
-        public AccountController(IConfiguration configuration)
+        public AccountController(IConfiguration configuration, AuthenticationApiClient client)
         {
-            this._configuration = configuration;
+            _configuration = configuration;
+            _client = client;
         }
 
         [HttpGet]
@@ -39,9 +38,8 @@ namespace SampleMvcApp.Controllers
             {
                 try
                 {
-                    AuthenticationApiClient client = new AuthenticationApiClient(new Uri($"https://{_configuration["Auth0:Domain"]}/"));
 
-                    var result = await client.GetTokenAsync(new ResourceOwnerTokenRequest
+                    var result = await _client.GetTokenAsync(new ResourceOwnerTokenRequest
                     {
                         ClientId = _configuration["Auth0:ClientId"],
                         ClientSecret = _configuration["Auth0:ClientSecret"],
@@ -52,7 +50,7 @@ namespace SampleMvcApp.Controllers
                     });
 
                     // Get user info from token
-                    var user = await client.GetUserInfoAsync(result.AccessToken);
+                    var user = await _client.GetUserInfoAsync(result.AccessToken);
 
                     // Create claims principal
                     var claimsPrincipal = new ClaimsPrincipal(new ClaimsIdentity(new[]
