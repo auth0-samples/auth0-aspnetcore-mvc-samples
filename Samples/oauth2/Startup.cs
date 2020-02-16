@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
+using Microsoft.Extensions.Hosting;
 
 namespace AspNetCoreOAuth2Sample
 {
@@ -77,32 +77,29 @@ namespace AspNetCoreOAuth2Sample
                         response.EnsureSuccessStatusCode();
 
                         // Extract the user info object
-                        var user = JObject.Parse(await response.Content.ReadAsStringAsync());
+                        using JsonDocument user = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
 
                         // Add the Name Identifier claim
-                        var userId = user.Value<string>("sub");
-                        if (!string.IsNullOrEmpty(userId))
+                        if (user.RootElement.TryGetProperty("sub", out JsonElement userId))
                         {
-                            context.Identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId, ClaimValueTypes.String, context.Options.ClaimsIssuer));
+                            context.Identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId.GetString(), ClaimValueTypes.String, context.Options.ClaimsIssuer));
                         }
 
                         // Add the Name claim
-                        var email = user.Value<string>("name");
-                        if (!string.IsNullOrEmpty(email))
+                        if (user.RootElement.TryGetProperty("name", out JsonElement email))
                         {
-                            context.Identity.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, email, ClaimValueTypes.String, context.Options.ClaimsIssuer));
+                            context.Identity.AddClaim(new Claim(ClaimsIdentity.DefaultNameClaimType, email.GetString(), ClaimValueTypes.String, context.Options.ClaimsIssuer));
                         }
                     }
                 };
             });
 
             // Add framework services.
-            services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -118,13 +115,14 @@ namespace AspNetCoreOAuth2Sample
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            app.UseAuthentication();
+            app.UseRouting();
 
-            app.UseMvc(routes =>
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapDefaultControllerRoute();
             });
         }
     }

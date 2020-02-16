@@ -6,7 +6,7 @@ For more information on how to use Auth0 with ASP.NET Core, please look at the [
 
 ## Requirements
 
-* .[NET Core 2.1 SDK](https://www.microsoft.com/net/download/core)
+* .[NET Core 3.1 SDK](https://www.microsoft.com/net/download/core)
 
 ## To run this project
 
@@ -111,7 +111,7 @@ public void ConfigureServices(IServiceCollection services)
     });
 
     // Add framework services.
-    services.AddMvc();
+    services.AddControllersWithViews();
 }
 ```
 
@@ -120,11 +120,8 @@ public void ConfigureServices(IServiceCollection services)
 In the `Configure` method of your `Startup` class call the `UseAuthentication` extension method:
 
 ```csharp
-public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IOptions<Auth0Settings> auth0Settings)
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 {
-    loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-    loggerFactory.AddDebug();
-
     if (env.IsDevelopment())
     {
         app.UseDeveloperExceptionPage();
@@ -136,14 +133,14 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerF
     }
 
     app.UseStaticFiles();
+	app.UseRouting();
 
     app.UseAuthentication();
+	app.UseAuthorization();
 
-    app.UseMvc(routes =>
+    app.UseEndpoints(endpoints =>
     {
-        routes.MapRoute(
-            name: "default",
-            template: "{controller=Home}/{action=Index}/{id?}");
+        endpoints.MapDefaultControllerRoute();
     });
 }
 

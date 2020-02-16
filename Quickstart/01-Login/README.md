@@ -66,14 +66,14 @@ public void ConfigureServices(IServiceCollection services)
     });
 
     // Add framework services.
-    services.AddMvc();
+    services.AddControllersWithViews();
 }
 ```
 
 ### 2. Register the Authentication middleware
 
 ```csharp
-public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 {
     if (env.IsDevelopment())
     {
@@ -85,15 +85,13 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     }
 
     app.UseStaticFiles();
-
+	app.UseRouting();
     // Register the Authentication middleware
     app.UseAuthentication();
+    app.UseAuthorization();
 
-    app.UseMvc(routes =>
-    {
-        routes.MapRoute(
-            name: "default",
-            template: "{controller=Home}/{action=Index}/{id?}");
+    app.UseEndpoints(endpoints => {
+        endpoints.MapDefaultControllerRoute();
     });
 }
 ```
