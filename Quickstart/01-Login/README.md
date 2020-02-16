@@ -88,6 +88,7 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 	app.UseRouting();
     // Register the Authentication middleware
     app.UseAuthentication();
+    app.UseAuthorization();
 
     app.UseEndpoints(endpoints => {
         endpoints.MapDefaultControllerRoute();
