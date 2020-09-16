@@ -50,7 +50,7 @@ namespace SampleMvcApp
                 options.ClientSecret = Configuration["Auth0:ClientSecret"];
 
                 // Set response type to code
-                options.ResponseType = OpenIdConnectResponseType.Code; ;
+                options.ResponseType = OpenIdConnectResponseType.Code;
 
                 // Configure the scope
                 options.Scope.Clear();
