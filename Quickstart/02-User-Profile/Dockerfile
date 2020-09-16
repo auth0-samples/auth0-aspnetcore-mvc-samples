@@ -8,6 +8,8 @@ RUN ["dotnet", "restore"]
 COPY . .
 RUN ["dotnet", "build"]
 
-EXPOSE 3000/tcp
+ENV ASPNETCORE_URLS=https://+:443
+ENV ASPNETCORE_Kestrel__Certificates__Default__Password=auth0-sample
+ENV ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
 
 ENTRYPOINT ["dotnet", "run"]
