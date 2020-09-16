@@ -9,6 +9,7 @@ using System;
 using System.Threading.Tasks;
 using Auth0.AuthenticationApi;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace SampleMvcApp
 {
@@ -47,14 +48,14 @@ namespace SampleMvcApp
                 options.ClientSecret = Configuration["Auth0:ClientSecret"];
 
                 // Set response type to code
-                options.ResponseType = "code";
+                options.ResponseType = OpenIdConnectResponseType.Code;
 
                 // Configure the scope
                 options.Scope.Clear();
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
 
-                // Set the callback path, so Auth0 will call back to http://localhost:3000/callback
+                // Set the callback path, so Auth0 will call back to https://localhost:44360/callback
                 // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard
                 options.CallbackPath = new PathString("/callback");
 
@@ -123,6 +124,7 @@ namespace SampleMvcApp
             app.UseRouting();
 
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
