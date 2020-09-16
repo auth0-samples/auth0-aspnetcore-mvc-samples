@@ -16,19 +16,23 @@ This sample demonstrates how you can configure the standard OAuth2 middleware to
     dotnet run
     ```
 
-3. Go to `http://localhost:3000` in your web browser to view the website.
+3. Go to `https://localhost:44360` in your web browser to view the website.
 
 ## To run this project with docker
 
-In order to run the example with docker you need to have **Docker** installed.
+1. Ensure that you have replaced the [appsettings.json](appsettings.json) file with the values for your Auth0 account.
 
-Execute in command line `sh exec.sh` to run the Docker in Linux or macOS, or `.\exec.ps1` to run the Docker in Windows.
+2. Ensure **Docker** is installed
+
+3. Execute in command line `sh exec.sh` to run the Docker in Linux or macOS, or `.\exec.ps1` to run the Docker in Windows.
+
+4. Go to `https://localhost:44360` in your web browser to view the website.
 
 ## Important Snippets
 
 ### 1. Configure your Auth0 application
 
-Go to the Auth0 Dashboard and ensure that you add the URL http://localhost:3000/callback to your list of callback URLs
+Go to the Auth0 Dashboard and ensure that you add the URL https://localhost:44360/callback to your list of callback URLs
 
 ### 2. Configure Authentication Services
 
@@ -51,7 +55,7 @@ public void ConfigureServices(IServiceCollection services)
         options.ClientId = Configuration["Auth0:ClientId"];
         options.ClientSecret = Configuration["Auth0:ClientSecret"];
 
-        // Set the callback path, so Auth0 will call back to http://localhost:3000/callback
+        // Set the callback path, so Auth0 will call back to https://localhost:44360/callback
         // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard
         options.CallbackPath = new PathString("/callback");
 

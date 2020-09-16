@@ -44,7 +44,7 @@ namespace AspNetCoreOAuth2Sample
                 options.ClientId = Configuration["Auth0:ClientId"];
                 options.ClientSecret = Configuration["Auth0:ClientSecret"];
 
-                // Set the callback path, so Auth0 will call back to http://localhost:3000/callback
+                // Set the callback path, so Auth0 will call back to https://localhost:44360/callback
                 // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard
                 options.CallbackPath = new PathString("/callback");
 
