@@ -10,7 +10,7 @@ You can read a quickstart for this sample [here](https://auth0.com/docs/quicksta
 
 ## To run this project
 
-1. Ensure that you have replaced the [appsettings.json](SampleMvcApp/appsettings.json) file with the values for your Auth0 account.
+1. Ensure that you have replaced the [appsettings.json](appsettings.json) file with the values for your Auth0 account.
 
 2. Run the application from the command line:
 
@@ -18,13 +18,17 @@ You can read a quickstart for this sample [here](https://auth0.com/docs/quicksta
     dotnet run
     ```
 
-3. Go to `http://localhost:3000` in your web browser to view the website.
+3. Go to `https://localhost:44360` in your web browser to view the website.
 
 ## To run this project with docker
 
-In order to run the example with docker you need to have **Docker** installed.
+1. Ensure that you have replaced the [appsettings.json](appsettings.json) file with the values for your Auth0 account.
 
-Execute in command line `sh exec.sh` to run the Docker in Linux or macOS, or `.\exec.ps1` to run the Docker in Windows.
+2. Ensure **Docker** is installed
+
+3. Execute in command line `sh exec.sh` to run the Docker in Linux or macOS, or `.\exec.ps1` to run the Docker in Windows.
+
+4. Go to `https://localhost:44360` in your web browser to view the website.
 
 ## Important Snippets
 
