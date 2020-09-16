@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace AspNetCoreOidcSample
 {
@@ -59,7 +60,7 @@ namespace AspNetCoreOidcSample
                     options.ClientSecret = Configuration["Auth0:ClientSecret"];
 
                     // Set response type to code
-                    options.ResponseType = "code";
+                    options.ResponseType = OpenIdConnectResponseType.Code;
 
                     // Configure the scope
                     options.Scope.Clear();
