@@ -9,6 +9,8 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using SampleMvcApp.Support;
 
 namespace SampleMvcApp
 {
@@ -26,12 +28,7 @@ namespace SampleMvcApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => HostingEnvironment.IsProduction();
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
+            services.ConfigureSameSiteNoneCookies();
 
             // Add authentication services
             services.AddAuthentication(options => {
@@ -49,7 +46,7 @@ namespace SampleMvcApp
                 options.ClientSecret = Configuration["Auth0:ClientSecret"];
 
                 // Set response type to code
-                options.ResponseType = "code";
+                options.ResponseType = OpenIdConnectResponseType.Code;
 
                 // Configure the scope
                 options.Scope.Clear();

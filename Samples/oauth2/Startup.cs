@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using Microsoft.Extensions.Hosting;
+using AspNetCoreOAuth2Sample.Support;
 
 namespace AspNetCoreOAuth2Sample
 {
@@ -25,12 +26,7 @@ namespace AspNetCoreOAuth2Sample
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
+            services.ConfigureSameSiteNoneCookies();
 
             // Add authentication services
             services.AddAuthentication(options => {
