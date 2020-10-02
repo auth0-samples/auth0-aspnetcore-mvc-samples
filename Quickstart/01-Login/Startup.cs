@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SampleMvcApp.Support;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -28,12 +29,7 @@ namespace SampleMvcApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => HostingEnvironment.IsProduction();
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-            });
+            services.ConfigureSameSiteNoneCookies();
 
             // Add authentication services
             services.AddAuthentication(options => {
