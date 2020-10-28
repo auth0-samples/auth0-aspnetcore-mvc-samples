@@ -12,7 +12,7 @@ defaults: &defaults
       - run:
           name: Authenticate to Docker Hub
           command: |
-            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
       - run:
           name: Build pull request
           command: |
