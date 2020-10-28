@@ -10,6 +10,10 @@ defaults: &defaults
             sed -i 's/{DOMAIN}/'$AUTH0_TEST_DOMAIN'/g' $AUTH0_CFG
             sed -i 's/{CLIENT_SECRET}/'$AUTH0_TEST_CLIENT_SECRET'/g' $AUTH0_CFG
       - run:
+          name: Authenticate to Docker Hub
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run:
           name: Build pull request
           command: |
             docker build -t $CIRCLE_JOB ./$SAMPLE_PATH
@@ -75,16 +79,24 @@ workflows:
   quickstarts_login:
     jobs:
       - checkout:
-          context: Quickstart Web App Test
+          context: 
+            - Docker Hub Credentials
+            - Quickstart Web App Test
       - 01-login:
-          context: Quickstart Web App Test
+          context: 
+            - Docker Hub Credentials
+            - Quickstart Web App Test
           requires:
             - checkout
       - 02-user-profile:
-          context: Quickstart Web App Test
+          context: 
+            - Docker Hub Credentials
+            - Quickstart Web App Test
           requires:
             - checkout
       - 03-authorization:
-          context: Quickstart Web App Test
+          context: 
+            - Docker Hub Credentials
+            - Quickstart Web App Test
           requires:
             - checkout
