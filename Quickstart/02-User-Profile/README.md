@@ -2,29 +2,37 @@
 
 This example shows how to extract user profile information from claims and display the user's profile in your application.
 
-You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/03-user-profile).
+You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/02-user-profile).
 
 ## Requirements
 
-* .[NET Core 3.1 SDK](https://www.microsoft.com/net/download/core)
+- [.NET SDK](https://dotnet.microsoft.com/download) (.NET Core 3.1 or .NET 5.0+)
 
 ## To run this project
 
-1. Ensure that you have replaced the [appsettings.json](SampleMvcApp/appsettings.json) file with the values for your Auth0 account.
+1. Ensure that you have replaced the `appsettings.json` file with the values for your Auth0 account.
 
 2. Run the application from the command line:
 
-    ```bash
-    dotnet run
-    ```
+```bash
+dotnet run
+```
 
 3. Go to `http://localhost:3000` in your web browser to view the website.
 
-## To run this project with docker
+## Run this project with Docker
 
-In order to run the example with docker you need to have **Docker** installed.
+In order to run the example with Docker you need to have [Docker](https://docker.com/products/docker-desktop) installed.
 
-Execute in command line `sh exec.sh` to run the Docker in Linux or macOS, or `.\exec.ps1` to run the Docker in Windows.
+To build the Docker image and run the project inside a container, run the following command in a terminal, depending on your operating system:
+
+```
+# Mac
+sh exec.sh
+
+# Windows (using Powershell)
+.\exec.ps1
+```
 
 ## Important Snippets
 
@@ -65,27 +73,26 @@ public IActionResult Profile()
 ```html
 <!-- /Views/Accounts/Profile.cshtml -->
 
-@model SampleMvcApp.ViewModels.UserProfileViewModel
-@{
-    ViewData["Title"] = "User Profile";
-}
+@model SampleMvcApp.ViewModels.UserProfileViewModel @{ ViewData["Title"] = "User
+Profile"; }
 
 <div class="row">
-    <div class="col-md-12">
-        <div class="row">
-            <h2>@ViewData["Title"].</h2>
+  <div class="col-md-12">
+    <div class="row">
+      <h2>@ViewData["Title"].</h2>
 
-            <div class="col-md-2">
-                <img src="@Model.ProfileImage"
-                     alt="" class="img-rounded img-responsive" />
-            </div>
-            <div class="col-md-4">
-                <h3>@Model.Name</h3>
-                <p>
-                    <i class="glyphicon glyphicon-envelope"></i> @Model.EmailAddress
-                </p>
-            </div>
-        </div>
+      <div class="col-md-2">
+        <img
+          src="@Model.ProfileImage"
+          alt=""
+          class="img-rounded img-responsive"
+        />
+      </div>
+      <div class="col-md-4">
+        <h3>@Model.Name</h3>
+        <p><i class="glyphicon glyphicon-envelope"></i> @Model.EmailAddress</p>
+      </div>
     </div>
+  </div>
 </div>
 ```
