@@ -1,30 +1,38 @@
 # Login
 
-This example shows how to add ***Login/SignUp*** to your application using the hosted version of the `Lock` widget.
+This example shows how to add **_Login/SignUp_** to your application using the hosted version of the `Lock` widget.
 
-You can read a [quickstart for this sample here](https://auth0.com/docs/quickstart/webapp/aspnet-core-3/01-login).
+You can read a [quickstart for this sample here](https://auth0.com/docs/quickstart/webapp/aspnet-core/01-login).
 
 ## Requirements
 
-* .[NET Core 3.1 SDK](https://www.microsoft.com/net/download/core)
+- [.NET SDK](https://dotnet.microsoft.com/download) (.NET Core 3.1 or .NET 5.0+)
 
 ## To run this project
 
-1. Ensure that you have replaced the [appsettings.json](SampleMvcApp/appsettings.json) file with the values for your Auth0 account.
+1. Ensure that you have replaced the `appsettings.json` file with the values for your Auth0 account.
 
 2. Run the application from the command line:
 
-    ```bash
-    dotnet run
-    ```
+```bash
+dotnet run
+```
 
 3. Go to `http://localhost:3000` in your web browser to view the website.
 
-## To run this project with docker
+## To run this project with Docker
 
-In order to run the example with docker you need to have **Docker** installed.
+In order to run the example with Docker you need to have [Docker](https://docker.com/products/docker-desktop) installed.
 
-Execute in command line `sh exec.sh` to run the Docker in Linux or macOS, or `.\exec.ps1` to run the Docker in Windows.
+To build the Docker image and run the project inside a container, run the following command in a terminal, depending on your operating system:
+
+```
+# Mac
+sh exec.sh
+
+# Windows (using Powershell)
+.\exec.ps1
+```
 
 ## Important Snippets
 
@@ -58,7 +66,7 @@ public void ConfigureServices(IServiceCollection services)
         options.Scope.Add("openid");
 
         // Set the callback path, so Auth0 will call back to http://localhost:3000/callback
-        // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard 
+        // Also ensure that you have added the URL as an Allowed Callback URL in your Auth0 dashboard
         options.CallbackPath = new PathString("/callback");
 
         // Configure the Claims Issuer to be Auth0
