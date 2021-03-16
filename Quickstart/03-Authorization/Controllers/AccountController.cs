@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using SampleMvcApp.ViewModels;
 using System.Linq;
 using System.Security.Claims;
+using System;
+using Auth0.ASPNETCore.MVC;
+using System.Collections.Generic;
 
 namespace SampleMvcApp.Controllers
 {
@@ -14,7 +17,13 @@ namespace SampleMvcApp.Controllers
     {
         public async Task Login(string returnUrl = "/")
         {
-            await HttpContext.ChallengeAsync("Auth0", new AuthenticationProperties() { RedirectUri = returnUrl });
+            var authenticationProperties = new AuthenticationProperties() { RedirectUri = returnUrl };
+            var organization = "123";
+
+            if (!string.IsNullOrEmpty(organization))
+                authenticationProperties.Items.Add("organization", organization);
+
+            await HttpContext.ChallengeAsync("Auth0", authenticationProperties);
         }
 
         [Authorize]
@@ -27,12 +36,17 @@ namespace SampleMvcApp.Controllers
                 // **Allowed Logout URLs** settings for the client.
                 RedirectUri = Url.Action("Index", "Home")
             });
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync(Auth0AuthenticationDefaults.AuthenticationScheme);
         }
 
         [Authorize]
-        public IActionResult Profile()
+        public async Task<IActionResult> Profile()
         {
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var refreshToken = await HttpContext.GetTokenAsync("refresh_token");
+            var idToken = await HttpContext.GetTokenAsync("id_token");
+            var expiresAt = DateTimeOffset.Parse(await HttpContext.GetTokenAsync("expires_at"));
+
             return View(new UserProfileViewModel()
             {
                 Name = User.Identity.Name,
