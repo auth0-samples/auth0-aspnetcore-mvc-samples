@@ -43,6 +43,12 @@ namespace SampleMvcApp
                     options.ClientSecret = Configuration["Auth0:ClientSecret"];
                     options.AuthorizeOptions = new Auth0AuthorizeOptions
                     {
+                        Audience = "Test",
+                        //Organization = "123",
+                        /*ExtraParameters = new System.Collections.Generic.Dictionary<string, string>()
+                        {
+                            ["parameter1"] =  "parameter1"
+                        }*/
                     };
                 });
 

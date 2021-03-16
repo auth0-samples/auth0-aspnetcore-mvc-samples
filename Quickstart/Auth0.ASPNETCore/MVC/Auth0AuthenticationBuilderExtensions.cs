@@ -61,6 +61,7 @@ namespace Auth0.ASPNETCore.MVC
                 foreach (var extraParam in GetAuthorizeParameters(auth0AuthorizeOptions, context.Properties.Items))
                 {
                     context.ProtocolMessage.SetParameter(extraParam.Key, extraParam.Value);
+                    context.Properties.Items[extraParam.Key] = extraParam.Value;
                 }
 
                 return Task.CompletedTask;
@@ -146,6 +147,16 @@ namespace Auth0.ASPNETCore.MVC
                 // access token
                 // var accessToken = new JwtSecurityToken(x.TokenEndpointResponse.AccessToken);
                 // x.Properties.ExpiresUtc = accessToken.ValidTo;
+
+                var organization = context.Properties.Items.ContainsKey("organization") ? context.Properties.Items["organization"] : null;
+                var audience = context.Properties.Items["audience"];
+                var organizationClaim = context.SecurityToken.Claims.SingleOrDefault(claim => claim.Type == "org_id");
+
+                if (!string.IsNullOrEmpty(organization) && (organizationClaim == null || organization != organizationClaim.Value))
+                {
+                    context.Fail("Invalid org_id claim");
+                }
+
                 return Task.CompletedTask;
             };
         }

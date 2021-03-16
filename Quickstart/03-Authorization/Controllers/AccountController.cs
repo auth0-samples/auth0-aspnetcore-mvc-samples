@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -9,7 +7,6 @@ using System.Linq;
 using System.Security.Claims;
 using System;
 using Auth0.ASPNETCore.MVC;
-using System.Collections.Generic;
 
 namespace SampleMvcApp.Controllers
 {
@@ -19,9 +16,13 @@ namespace SampleMvcApp.Controllers
         {
             var authenticationProperties = new AuthenticationProperties() { RedirectUri = returnUrl };
             var organization = "123";
+            var max_age = "5000";
 
-            if (!string.IsNullOrEmpty(organization))
-                authenticationProperties.Items.Add("organization", organization);
+            /*if (!string.IsNullOrEmpty(organization))
+                authenticationProperties.Items.Add("organization", organization);*/
+
+            if (!string.IsNullOrEmpty(max_age))
+                authenticationProperties.Items.Add("max_age", max_age);
 
             await HttpContext.ChallengeAsync("Auth0", authenticationProperties);
         }
