@@ -6,8 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SampleMvcApp.Support;
 using Auth0.ASPNETCore.MVC;
-using Auth0.ASPNETCore.WebApi;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace SampleMvcApp
 {
@@ -35,8 +33,6 @@ namespace SampleMvcApp
                     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 })
-
-
                 .AddAuth0MVC(options => {
                     options.Domain = Configuration["Auth0:Domain"];
                     options.ClientId = Configuration["Auth0:ClientId"];
@@ -51,14 +47,6 @@ namespace SampleMvcApp
                         }*/
                     };
                 });
-
-            /*services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddAuth0WebApi(options =>
-                {
-                    options.Domain = Configuration["Auth0:Domain"];
-                    options.Audience = "Test";
-                });*/
 
             // Add framework services.
             services.AddControllersWithViews();
