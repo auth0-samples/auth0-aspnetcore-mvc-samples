@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SampleMvcApp.Support;
 using Auth0.ASPNETCore.MVC;
+using System.Collections.Generic;
 
 namespace SampleMvcApp
 {
@@ -37,6 +38,7 @@ namespace SampleMvcApp
                     options.Domain = Configuration["Auth0:Domain"];
                     options.ClientId = Configuration["Auth0:ClientId"];
                     options.ClientSecret = Configuration["Auth0:ClientSecret"];
+                    options.Scope = new List<string> { "openid", "profile", "profile", "Scope1", "Scope2" };
                     options.AuthorizeOptions = new Auth0AuthorizeOptions
                     {
                         Audience = "Test",

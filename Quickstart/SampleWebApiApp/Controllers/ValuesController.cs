@@ -7,7 +7,7 @@ namespace SampleWebApiApp.Controllers
     [Route("[controller]")]
     public class ValuesController : ControllerBase
     {
-        [Authorize]
+        [Authorize("Scope2")]
         [HttpGet]
         public string Get()
         {

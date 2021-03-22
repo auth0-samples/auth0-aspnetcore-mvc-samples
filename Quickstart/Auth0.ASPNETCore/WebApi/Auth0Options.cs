@@ -7,5 +7,6 @@ namespace Auth0.ASPNETCore.WebApi
     {
         public string Domain { get; set; }
         public string Audience { get; set; }
+        public ICollection<String> Scopes { get; set; } = new List<string>();
     }
 }

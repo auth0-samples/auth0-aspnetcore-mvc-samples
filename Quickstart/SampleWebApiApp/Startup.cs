@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
 
 namespace SampleWebApiApp
 {
@@ -23,11 +24,16 @@ namespace SampleWebApiApp
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddAuth0WebApi(options =>
                 {
                     options.Domain = Configuration["Auth0:Domain"];
                     options.Audience = Configuration["Auth0:Audience"];
+                    options.Scopes = new List<string>()
+                    {
+                        "Scope1",
+                        "Scope2",
+                        "Scope3"
+                    };
                 });
 
             services.AddControllers();

@@ -14,7 +14,7 @@ namespace Auth0.ASPNETCore.MVC
         public string Domain { get; set; }
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
-        public ICollection<String> Scope { get; set; }
+        public ICollection<String> Scope { get; set; } = new List<string>();
         public bool UseRefreshTokens { get; set; }
         public string CallbackPath { get; set; }
         public Auth0AuthorizeOptions AuthorizeOptions { get; set; }
