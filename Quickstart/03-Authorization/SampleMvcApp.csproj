@@ -3,6 +3,6 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.4" />
+    <PackageReference Include="Auth0.AspNetCore.Mvc" Version="1.0.0" />
   </ItemGroup>
 </Project>
