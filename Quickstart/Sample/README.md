@@ -1,8 +1,8 @@
-# User Profile
+# Quickstart Sample
 
-This example shows how to extract user profile information from claims and display the user's profile in your application.
+This example shows how to add login/logout and extract user profile information from claims.
 
-You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core/02-user-profile).
+You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core-beta).
 
 ## Requirements
 
@@ -36,26 +36,46 @@ sh exec.sh
 
 ## Important Snippets
 
-### 1. Create a View Model to store the Profile
+### 1. Register the Auth0 SDK
 
 ```csharp
-// /ViewModels/UserProfileViewModel.cs
-
-public class UserProfileViewModel
+public void ConfigureServices(IServiceCollection services)
 {
-    public string EmailAddress { get; set; }
-
-    public string Name { get; set; }
-
-    public string ProfileImage { get; set; }
+    services.AddAuth0WebAppAuthentication(options => {
+        options.Domain = Configuration["Auth0:Domain"];
+        options.ClientId = Configuration["Auth0:ClientId"];
+    });
 }
 ```
 
-### 2. Extract profile from claims
+### 2. Register the Authentication middleware
 
 ```csharp
-// /Controllers/AccountController.cs
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+    ...
+    app.UseAuthentication();
+    app.UseAuthorization();
+    ...
+}
+```
+### 3. Login
 
+```csharp
+public async Task Login(string returnUrl = "/")
+{
+    var authenticationProperties = new AuthenticationPropertiesBuilder()
+        .WithRedirectUri(returnUrl)
+        .Build();
+
+    await HttpContext.ChallengeAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
+}
+
+```
+
+### 4. User Profile
+
+```csharp
 [Authorize]
 public IActionResult Profile()
 {
@@ -68,31 +88,19 @@ public IActionResult Profile()
 }
 ```
 
-### 3. User Profile view
+### 5. Logout
 
-```html
-<!-- /Views/Accounts/Profile.cshtml -->
-
-@model SampleMvcApp.ViewModels.UserProfileViewModel @{ ViewData["Title"] = "User
-Profile"; }
-
-<div class="row">
-  <div class="col-md-12">
-    <div class="row">
-      <h2>@ViewData["Title"].</h2>
-
-      <div class="col-md-2">
-        <img
-          src="@Model.ProfileImage"
-          alt=""
-          class="img-rounded img-responsive"
-        />
-      </div>
-      <div class="col-md-4">
-        <h3>@Model.Name</h3>
-        <p><i class="glyphicon glyphicon-envelope"></i> @Model.EmailAddress</p>
-      </div>
-    </div>
-  </div>
-</div>
+```csharp
+[Authorize]
+public async Task Logout()
+{
+    await HttpContext.SignOutAsync(Auth0Constants.AuthenticationScheme, new AuthenticationProperties
+    {
+        // Indicate here where Auth0 should redirect the user after a logout.
+        // Note that the resulting absolute Uri must be whitelisted in the
+        // **Allowed Logout URLs** settings for the client.
+        RedirectUri = Url.Action("Index", "Home")
+    });
+    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+}
 ```
