@@ -64,7 +64,7 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 ```csharp
 public async Task Login(string returnUrl = "/")
 {
-    var authenticationProperties = new AuthenticationPropertiesBuilder()
+    var authenticationProperties = new LoginAuthenticationPropertiesBuilder()
         .WithRedirectUri(returnUrl)
         .Build();
 
@@ -94,13 +94,14 @@ public IActionResult Profile()
 [Authorize]
 public async Task Logout()
 {
-    await HttpContext.SignOutAsync(Auth0Constants.AuthenticationScheme, new AuthenticationProperties
-    {
+    var authenticationProperties = new LogoutAuthenticationPropertiesBuilder()
         // Indicate here where Auth0 should redirect the user after a logout.
         // Note that the resulting absolute Uri must be whitelisted in the
         // **Allowed Logout URLs** settings for the client.
-        RedirectUri = Url.Action("Index", "Home")
-    });
+        .WithRedirectUri(Url.Action("Index", "Home"))
+        .Build();
+        
+    await HttpContext.SignOutAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
     await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 }
 ```
