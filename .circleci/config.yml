@@ -8,7 +8,6 @@ defaults: &defaults
           command: |
             sed -i 's/{CLIENT_ID}/'$AUTH0_TEST_CLIENT_ID'/g' $AUTH0_CFG
             sed -i 's/{DOMAIN}/'$AUTH0_TEST_DOMAIN'/g' $AUTH0_CFG
-            sed -i 's/{CLIENT_SECRET}/'$AUTH0_TEST_CLIENT_SECRET'/g' $AUTH0_CFG
       - run:
           name: Build pull request
           command: |
@@ -54,20 +53,8 @@ jobs:
   01-login:
     machine: true
     environment:
-      - AUTH0_CFG: Quickstart/01-Login/appsettings.json
-      - SAMPLE_PATH: Quickstart/01-Login
-    <<: *defaults
-  02-user-profile:
-    machine: true
-    environment:
-      - AUTH0_CFG: Quickstart/02-User-Profile/appsettings.json
-      - SAMPLE_PATH: Quickstart/02-User-Profile
-    <<: *defaults
-  03-authorization:
-    machine: true
-    environment:
-      - AUTH0_CFG: Quickstart/03-Authorization/appsettings.json
-      - SAMPLE_PATH: Quickstart/03-Authorization
+      - AUTH0_CFG: Quickstart/Sample/appsettings.json
+      - SAMPLE_PATH: Quickstart/Sample
     <<: *defaults
 
 workflows:
@@ -77,14 +64,6 @@ workflows:
       - checkout:
           context: Quickstart Web App Test
       - 01-login:
-          context: Quickstart Web App Test
-          requires:
-            - checkout
-      - 02-user-profile:
-          context: Quickstart Web App Test
-          requires:
-            - checkout
-      - 03-authorization:
           context: Quickstart Web App Test
           requires:
             - checkout
