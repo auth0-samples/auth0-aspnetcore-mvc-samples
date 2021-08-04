@@ -1,4 +1,4 @@
-# Auth0 ASP.NET Core MVC Samples
+# Auth0 ASP.NET Core MVC Samples.
 
 [![CircleCI](https://circleci.com/gh/auth0-samples/auth0-aspnetcore-mvc-samples.svg?style=svg)](https://circleci.com/gh/auth0-samples/auth0-aspnetcore-mvc-samples)
 
