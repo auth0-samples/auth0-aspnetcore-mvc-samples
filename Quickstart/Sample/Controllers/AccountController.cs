@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using SampleMvcApp.ViewModels;
 using System.Linq;
 using System.Security.Claims;
-using Auth0.AspNetCore.Mvc;
+using Auth0.AspNetCore.Authentication;
 
 namespace SampleMvcApp.Controllers
 {

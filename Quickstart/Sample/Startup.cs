@@ -1,17 +1,10 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using SampleMvcApp.Support;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Auth0.AspNetCore.Mvc;
+using Auth0.AspNetCore.Authentication;
 
 namespace SampleMvcApp
 {
