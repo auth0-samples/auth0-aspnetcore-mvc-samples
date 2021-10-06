@@ -2,7 +2,7 @@
 
 This example shows how to add login/logout and extract user profile information from claims.
 
-You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core-beta).
+You can read a quickstart for this sample [here](https://auth0.com/docs/quickstart/webapp/aspnet-core).
 
 ## Requirements
 
