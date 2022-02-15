@@ -69,7 +69,7 @@ workflows:
     jobs:
       - checkout:
           context: Quickstart Web App Test
-      - 01-login:
+      - login:
           context: Quickstart Web App Test
           requires:
             - checkout
