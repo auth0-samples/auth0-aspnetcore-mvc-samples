@@ -63,13 +63,13 @@ jobs:
       - AUTH0_CFG: Quickstart/01-Login/appsettings.json
       - SAMPLE_PATH: Quickstart/01-Login
     <<: *defaults
-  02-user-profile:
+  user-profile:
     machine: true
     environment:
       - AUTH0_CFG: Quickstart/02-User-Profile/appsettings.json
       - SAMPLE_PATH: Quickstart/02-User-Profile
     <<: *defaults
-  03-authorization:
+  authorization:
     machine: true
     environment:
       - AUTH0_CFG: Quickstart/03-Authorization/appsettings.json
@@ -86,11 +86,11 @@ workflows:
           context: Quickstart Web App Test
           requires:
             - checkout
-      - 02-user-profile:
+      - user-profile:
           context: Quickstart Web App Test
           requires:
             - checkout
-      - 03-authorization:
+      - authorization:
           context: Quickstart Web App Test
           requires:
             - checkout
