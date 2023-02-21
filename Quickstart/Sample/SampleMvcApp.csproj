@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <UserSecretsId>2abbb6b8-7822-4ce3-bf38-02d9c0ea8928</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Auth0.AspNetCore.Authentication" Version="1.1.0" />
