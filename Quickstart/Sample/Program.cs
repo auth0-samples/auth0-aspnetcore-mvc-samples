@@ -11,10 +11,6 @@ using Microsoft.IdentityModel.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Adding these 2 statements prevents .NET 6 from advising you we must declare these in the old ConfigureServices
-//method from previous .NET versions.
-builder.Services.AddAuthorization();
-builder.Services.AddControllers();
 //To use MVC we have to explicitly declare we are using it. Doing so will prevent a System.InvalidOperationException.
 builder.Services.AddMvc();
 builder.Services.AddControllersWithViews();
@@ -35,7 +31,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseCookiePolicy();
 
