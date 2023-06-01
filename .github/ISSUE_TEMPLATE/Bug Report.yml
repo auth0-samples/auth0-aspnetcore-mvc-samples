@@ -48,10 +48,3 @@ body:
       description: Any other relevant information you think would be useful.
     validations:
       required: false
-
-  - type: input
-    id: environment-windows-version
-    attributes:
-      label: Windows version(s)
-    validations:
-      required: false
