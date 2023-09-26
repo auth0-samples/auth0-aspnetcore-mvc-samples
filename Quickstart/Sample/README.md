@@ -6,7 +6,7 @@ You can read a quickstart for this sample [here](https://auth0.com/docs/quicksta
 
 ## Requirements
 
-- [.NET SDK](https://dotnet.microsoft.com/download) (.NET Core 3.1 or .NET 5.0+)
+- [.NET SDK](https://dotnet.microsoft.com/download) (.NET 6.0+)
 
 ## To run this project
 
