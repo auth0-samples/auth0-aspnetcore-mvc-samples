@@ -1,4 +1,4 @@
-﻿using Auth0.AspNetCore.Authentication;
+using Auth0.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -8,6 +8,7 @@ using SampleMvcApp.Support;
 using System.Net;
 
 using Microsoft.IdentityModel.Logging;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,14 @@ app.UseStaticFiles();
 app.UseCookiePolicy();
 
 app.UseRouting();
+   
+    var fordwardedHeaderOptions = new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
+    };
+    fordwardedHeaderOptions.KnownNetworks.Clear();
+    fordwardedHeaderOptions.KnownProxies.Clear();
+app.UseForwardedHeaders(fordwardedHeaderOptions);
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseEndpoints(endpoints =>
